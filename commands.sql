@@ -109,6 +109,7 @@ CALL grantrow(12, 4);
 -- Joe's a jerk and captures two of Nick's rows. HAHA NICK
 CALL grantrow(12, 2);
 CALL grantrow(11, 2);
+CALL grantrow(2, 2);
 
 -- The following is a command and its output after these commands have run:
 /*
