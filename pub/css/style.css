@@ -1,0 +1,19 @@
+/* HEADER */
+ul li a.donate{
+	color:#999;
+}
+nav.top-bar.secondary{
+	background-color: #292929;
+	height:160px;
+}
+
+
+
+/* MAIN */
+.main{
+	margin:20px 0;
+	border-bottom: 1px solid #333;
+}
+div.sidebar.left.small-12.medium-3{
+	float:left;
+}
