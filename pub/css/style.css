@@ -2,18 +2,51 @@
 ul li a.donate{
 	color:#999;
 }
-nav.top-bar.secondary{
+
+nav.top-bar.sign-up{
 	background-color: #292929;
-	height:160px;
+	height:210px;
 }
-
-
+nav.top-bar.login{
+	background-color: #292929;
+	height:175px;	
+}
+nav.top-bar.secondary ul{
+	margin-left:0px;
+}
+.header-pop-up{
+	color:#f7f7f7;
+	font-weight: 700;
+	letter-spacing: 1.2px;
+	margin:10px 20px;
+}
+.secondary input{
+	width:90%;
+}
+.secondary label{
+	color:#bbb;
+}
+.secondary button{
+	margin:15px 30px;
+}
 
 /* MAIN */
-.main{
+.outward{
 	margin:20px 0;
-	border-bottom: 1px solid #333;
+	border-bottom: 1px solid #bbb;
 }
-div.sidebar.left.small-12.medium-3{
-	float:left;
+div.sidebar a.button.small{
+	border:3px solid #fff;
+}
+
+/*TABLE*/
+table{
+	width:100%;
+	padding:0;
+}
+td{
+	border:1px solid #ccc;
+}
+.numbers{
+	text-align: right;
 }
