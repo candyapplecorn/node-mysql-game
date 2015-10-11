@@ -20,17 +20,17 @@
 un=`sed -n '1 p; 2q' credentials`
 pw=`sed -n '2 p; 3q' credentials`
 
-if [[ $# -eq 1 && $1 =~ "delete" ]];
+if [[ $# -eq 1 && $1 =~ "delete" || $1 =~ "d" ]];
 then
     echo "Deleting the html5 game database."
     mysql -u$un -p$pw -e "drop database html5game;"
-elif [[ $# -eq 1 && $1 =~ "create" ]];
+elif [[ $# -eq 1 && $1 =~ "create" || $1 =~ "c" ]];
 then
     echo "Creating the html5 game database."
     mysql -u$un -p$pw < commands.sql
     echo "html5 game database created."
 else
-    echo "usage: serverSetup.sh [create|delete]";
+    echo "usage: serverSetup.sh [c(reate)|d(elete)]";
 fi;
 
 # Example of a credentials file:
