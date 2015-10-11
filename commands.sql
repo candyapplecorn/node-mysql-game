@@ -1,13 +1,10 @@
+-- ============================================================
+--      SCHEMA CREATION 
+-- ============================================================
 create database if not exists html5game; 
 
 USE html5game; 
 
-/*
-the default value for password is the md5 of "password"
-to get it, just do: mysql> select md5("password");
-
-rowsowned probably isn't needed since sql performs queries fast.
-*/
 CREATE TABLE IF NOT EXISTS players ( 
 id INT AUTO_INCREMENT NOT NULL PRIMARY KEY, 
 username VARCHAR(255) NOT NULL UNIQUE, 	-- DEFAULT 'defaultusername', 
@@ -23,14 +20,6 @@ lastlogin DATETIME
 
 /*
 The whole game recolves around rows, so it should be a pretty detailed table!
-
-notice - investors is a json object; for example:
-'{"alex": 1000, "nick": 1000000, "joe": 100}'
-Pretty freaking neat eh???
-Most languages can convert json strings into actual json objects.
-In javascript: (str contains a json stringified object)
-var json = JSON.stringify(eval("(" + str + ")"));
-SQL has json extract functions as well.
 */
 CREATE TABLE IF NOT EXISTS gamerows ( 
 id INT AUTO_INCREMENT NOT NULL PRIMARY KEY, 
@@ -50,10 +39,9 @@ lastattacked DATETIME,
 lastaccessed DATETIME
 );
 
-/*
-Now that we've entered our two main tables,
-let's populate them with some values.
-*/
+-- ============================================================
+--     PROCEDURES 
+-- ============================================================
 -- This is my first time making an actual function in pure sql! WOO HOO!
 delimiter //
 CREATE PROCEDURE fillgamerows(numrows INT)
@@ -66,7 +54,6 @@ BEGIN
 END
 //
 delimiter ;
-
 
 delimiter //
 CREATE PROCEDURE grantrow(row_id INT, user_id INT)
@@ -82,6 +69,80 @@ BEGIN
 END
 //
 delimiter ;
+
+-- updates a given row's money column
+-- drop procedure upd_r_money;
+delimiter //
+CREATE procedure upd_r_money(row_id int)
+BEGIN
+DECLARE money_rate INT DEFAULT 1;
+DECLARE period INT DEFAULT 0;
+SET period = (select timestampdiff(second, (select lastaccessed from gamerows where id = row_id), now()));
+update gamerows
+set money = money + period * money_rate
+where id = row_id;
+END;
+//
+delimiter ;
+
+-- updates a given row's fuel column
+-- drop procedure upd_r_fuel;
+delimiter //
+CREATE procedure upd_r_fuel(row_id int)
+fuel: BEGIN
+DECLARE fuel_rate INT DEFAULT 1;
+DECLARE period INT DEFAULT 0;
+SET period = (select timestampdiff(second, (select lastaccessed from gamerows where id = row_id), now()));
+update gamerows
+set fuel = fuel + period * fuel_rate
+where id = row_id;
+END fuel;
+//
+delimiter ;
+
+-- updates a given row's lastaccessed column
+-- drop procedure upd_r_access;
+delimiter //
+CREATE procedure upd_r_access(row_id int)
+upd_r_access: BEGIN
+UPDATE gamerows
+SET lastaccessed = now()
+WHERE id = row_id;
+END upd_r_access;
+//
+delimiter ;
+
+-- procedure to update a row
+-- drop procedure upd_all;
+delimiter //
+CREATE PROCEDURE upd_all(row_id int)
+BEGIN
+call upd_r_fuel(row_id);
+call upd_r_money(row_id);
+call upd_r_access(row_id);
+END;
+//
+delimiter ;
+
+-- procedure to test that things are working fine
+-- drop procedure test_row_2;
+delimiter //
+CREATE PROCEDURE test_row_2()
+BEGIN
+call upd_all(2);
+select id, money, fuel from gamerows where id = 2;
+END;
+//
+delimiter ;
+
+-- ============================================================
+--      DATABASE INITIALIZATION 
+-- ============================================================
+
+/*
+Now that we've entered our two main tables,
+let's populate them with some values.
+*/
 
 -- Let's make 100 rows in gamerows. 
 CALL fillgamerows(100);
@@ -110,30 +171,3 @@ CALL grantrow(12, 4);
 CALL grantrow(12, 2);
 CALL grantrow(11, 2);
 CALL grantrow(2, 2);
-
--- The following is a command and its output after these commands have run:
-/*
-mysql> select * from gamerows order by id asc limit 15;                                                                                                                                                                                      
-+----+-------+---------------+--------+-----------+-----------+-------+------+------+------+------+-------------+-----------+---------------------+---------------------+
-| id | owner | ownerusername | morale | defenders | attackers | money | fuel | mgs  | fgs  | dgs  | investments | investors | lastattacked        | lastaccessed        |
-+----+-------+---------------+--------+-----------+-----------+-------+------+------+------+------+-------------+-----------+---------------------+---------------------+
-|  1 |     0 |               |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:45 |
-|  2 |     0 |               |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:45 |
-|  3 |     0 |               |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:45 |
-|  4 |     0 |               |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:45 |
-|  5 |     1 | Alex          |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:48 |
-|  6 |     1 | Alex          |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:48 |
-|  7 |     1 | Alex          |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:49 |
-|  8 |     0 |               |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:45 |
-|  9 |     3 | Nick          |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:49 |
-| 10 |     3 | Nick          |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:49 |
-| 11 |     2 | Joe           |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:49 |
-| 12 |     2 | Joe           |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:49 |
-| 13 |     0 |               |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:45 |
-| 14 |     0 |               |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:45 |
-| 15 |     0 |               |      0 |         0 |         0 |     0 |    0 |    0 |    0 |    0 |           0 |           | 2015-10-03 22:52:45 | 2015-10-03 22:52:45 |
-+----+-------+---------------+--------+-----------+-----------+-------+------+------+------+------+-------------+-----------+---------------------+---------------------+
-15 rows in set (0.00 sec)
-
-mysql> 
-*/
