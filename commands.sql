@@ -144,6 +144,7 @@ CREATE PROCEDURE upd_all(row_id int)
 BEGIN
 call upd_r_fuel(row_id);
 call upd_r_money(row_id);
+call upd_r_hospital(row_id);
 call upd_r_access(row_id);
 END;
 //
@@ -155,7 +156,7 @@ delimiter //
 CREATE PROCEDURE test_row_2()
 BEGIN
 call upd_all(2);
-select id, money, fuel from gamerows where id = 2;
+select id, money, fuel, attackers, defenders, hospital from gamerows where id = 2;
 END;
 //
 delimiter ;
