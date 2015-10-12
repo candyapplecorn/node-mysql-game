@@ -105,6 +105,7 @@ END fuel;
 delimiter ;
 
 -- updates a given row's lastaccessed column
+-- to do: add in a feature so it wont update if less than a second has passed since lastaccessed
 -- drop procedure upd_r_access;
 delimiter //
 CREATE procedure upd_r_access(row_id int)
@@ -150,12 +151,28 @@ END;
 //
 delimiter ;
 
+-- procedure to buy attackers
+delimiter //
+CREATE PROCEDURE buy_attackers(row_id INT, num2buy INT)
+BEGIN
+DECLARE cash, attacker_cost, cost_per_attacker INT DEFAULT 2;
+SET attacker_cost =  (SELECT ABS(num2buy * cost_per_attacker));
+UPDATE gamerows
+SET money = money - attacker_cost,
+attackers = attackers + num2buy
+WHERE id = row_id
+AND attacker_cost <= money;
+END;
+//
+delimiter ;
+
 -- procedure to test that things are working fine
 -- drop procedure test_row_2;
 delimiter //
 CREATE PROCEDURE test_row_2()
 BEGIN
 call upd_all(2);
+call buy_attackers(2, 10);
 select id, money, fuel, attackers, defenders, hospital from gamerows where id = 2;
 END;
 //
