@@ -155,7 +155,7 @@ delimiter ;
 delimiter //
 CREATE PROCEDURE buy_attackers(row_id INT, num2buy INT)
 BEGIN
-DECLARE cash, attacker_cost, cost_per_attacker INT DEFAULT 2;
+DECLARE attacker_cost, cost_per_attacker INT DEFAULT 2;
 SET attacker_cost =  (SELECT ABS(num2buy * cost_per_attacker));
 UPDATE gamerows
 SET money = money - attacker_cost,
