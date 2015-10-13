@@ -105,7 +105,6 @@ BEGIN
 
 DECLARE fuel_rate, money_rate INT DEFAULT 1;
 
-
 UPDATE gamerows
 SET period = timestampdiff(second, lastaccessed, now()),
 healed = IF(timestampdiff(second, lastaccessed, now()) * (1 + hospital_level) > hospital, hospital, timestampdiff(second, lastaccessed, now()) * (1 + hospital_level))
@@ -131,6 +130,30 @@ END IF;
 END
 //
 delimiter ;
+
+/*
+Buy a fuel or money generator
+row_id : the row purchasing the item,
+item : {0:money generator, 1:fuel generator}
+(Ternaries were used liberally)
+*/
+delimiter //
+CREATE PROCEDURE purchase_generator(row_id INT, item INT)
+BEGIN
+DECLARE money_generators, fuel_generators, cash INT;
+SELECT mgs, fgs, money FROM gamerows WHERE id = row_id INTO money_generators, fuel_generators, cash;
+UPDATE gamerows
+SET mgs = IF(item = 0, IF(pow(2, money_generators) > cash, money_generators, money_generators + 1), money_generators),
+fgs = IF(item = 1, IF(pow(2, fuel_generators) > cash, fuel_generators, fuel_generators + 1), fuel_generators),
+money = IF(item = 0, IF(pow(2, money_generators) > cash, cash, cash - pow(2, money_generators)), IF(item = 1, IF(pow(2, fuel_generators) > cash, cash, cash - pow(2, fuel_generators)), cash))
+WHERE id = row_id;
+END
+//
+delimiter ;
+
+/*
+Attack a row
+*/
 
 -- ============================================================
 --      DATABASE INITIALIZATION 
