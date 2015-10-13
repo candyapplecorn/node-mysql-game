@@ -38,6 +38,8 @@ fgs INT DEFAULT 0 CHECK (FGS >= 0),
 dgs INT DEFAULT 0 CHECK (DGS >= 0),
 hospital INT DEFAULT 0 CHECK (hospital >= 0),
 hospital_level INT DEFAULT 0 CHECK (hospital_level >= 0),
+healed INT,
+period INT,
 investments INT DEFAULT 0 CHECK (investments >= 0),
 investors VARCHAR(255) DEFAULT '', -- This will be a string containing a JSON object.
 lastattacked DATETIME,
@@ -228,13 +230,8 @@ an alias for in MySQL, with 0 being false.
 	
 	This method pretty much obsoletes update_all, and the associated
 	upd_r_ procedures.
-INSERT INTO periods
-(period, healed)
-SELECT
-timestampdiff(second, lastaccessed, now()), 
-IF(timestampdiff(second, lastaccessed, now()) * (1 + hospital_level) > hospital, hospital, timestampdiff(second, lastaccessed, now()) * (1 + hospital_level))
-FROM gamerows
-WHERE id >= row_id AND id <= row_id + 9;
+
+Edit - removing temporary table all together, and adding "healed" and "period" to gamerows.
 */
 delimiter //
 CREATE PROCEDURE scan(row_id INT, display TINYINT)
@@ -242,31 +239,19 @@ BEGIN
 
 DECLARE fuel_rate, money_rate INT DEFAULT 1;
 
-CREATE TEMPORARY TABLE IF NOT EXISTS periods (
-SELECT 
-id, 
-0 AS period, 
-0 AS healed
-FROM gamerows 
-WHERE id >= row_id AND id <= row_id + 9
-);
 
-UPDATE periods AS pr
-JOIN gamerows AS g
-ON g.id = pr.id
-SET pr.period = timestampdiff(second, g.lastaccessed, now()),
-healed = IF(timestampdiff(second, g.lastaccessed, now()) * (1 + g.hospital_level) > g.hospital, g.hospital, timestampdiff(second, g.lastaccessed, now()) * (1 + g.hospital_level))
-WHERE pr.id >= row_id AND pr.id <= row_id + 9;
+UPDATE gamerows
+SET period = timestampdiff(second, lastaccessed, now()),
+healed = IF(timestampdiff(second, lastaccessed, now()) * (1 + hospital_level) > hospital, hospital, timestampdiff(second, lastaccessed, now()) * (1 + hospital_level))
+WHERE id >= row_id AND id <= row_id + 9;
 
-UPDATE gamerows AS g
-JOIN periods AS pr
-ON pr.id = g.id
-SET g.fuel = g.fuel + (pr.period * fuel_rate * g.fgs),
-g.money = g.money + (pr.period * money_rate * g.mgs),
-g.hospital = g.hospital - pr.healed,
-g.defenders = g.defenders + pr.healed,
-g.lastaccessed = now()
-WHERE g.id >= row_id AND g.id <= row_id + 9;
+UPDATE gamerows
+SET fuel = fuel + (period * fuel_rate * fgs),
+money = money + (period * money_rate * mgs),
+hospital = hospital - healed,
+defenders = defenders + healed,
+lastaccessed = now()
+WHERE id >= row_id AND id <= row_id + 9;
 
 IF display != 0 THEN
 SELECT gamerows.ID, gamerows.ownerusername, gamerows.defenders + gamerows.attackers AS Forces, gamerows.Money, gamerows.Fuel
