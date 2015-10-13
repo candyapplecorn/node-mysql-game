@@ -75,7 +75,7 @@ END
 //
 delimiter ;
 
-/* Just add this to the purchase proc! */
+/* Perhaps it would be smart to add this to the buy_item proc */
 -- procedure to buy attackers
 delimiter //
 CREATE PROCEDURE buy_attackers(row_id INT, num2buy INT)
@@ -97,12 +97,15 @@ Scan takes a row id and updates the corresponding row and the next
 
 The parameter "display" is a TINYINT, which is what BOOLEAN is
 an alias for in MySQL, with 0 being false.
+
+DEVNOTE - Change income so that rather than "fuel_rate * fgs", 
+it's something more interesting like "POW(1.2, num_generators)"
 */
 delimiter //
 CREATE PROCEDURE scan(row_id INT, display TINYINT)
 BEGIN
 
-DECLARE fuel_rate, money_rate INT DEFAULT 1;
+DECLARE fuel_rate, money_rate DOUBLE(2, 1) DEFAULT 1.2;
 
 UPDATE gamerows
 SET period = timestampdiff(second, lastaccessed, now()),
@@ -110,8 +113,8 @@ healed = IF(timestampdiff(second, lastaccessed, now()) * (1 + hospital_level) > 
 WHERE id >= row_id AND id <= row_id + 9;
 
 UPDATE gamerows
-SET fuel = fuel + (period * fuel_rate * fgs),
-money = money + (period * money_rate * mgs),
+SET fuel = fuel + (period * POW(fuel_rate, fgs)),
+money = money + (period * POW(money_rate, mgs)),
 hospital = hospital - healed,
 defenders = defenders + healed,
 lastaccessed = now()
@@ -140,28 +143,13 @@ AND display != 0;
 END
 //
 delimiter ;
+
 /*
 Buy a fuel or money generator
 row_id : the row purchasing the item,
-item : {0:money generator, 1:fuel generator, 2:hospital_level}
-(Ternaries were used liberally)
+item: the type to buy
+0 - money generator, 1 - fuel generator, 2 - hospital level, 3 - attack level, 4 - defense level
 */
-delimiter //
-CREATE PROCEDURE purchase_generator(row_id INT, item INT)
-BEGIN
-DECLARE hsptl_lvl, money_generators, fuel_generators, cash INT;
-CALL scan(row_id, 0);
-SELECT mgs, fgs, money, hospital_level FROM gamerows WHERE id = row_id INTO money_generators, fuel_generators, cash, hsptl_lvl;
-UPDATE gamerows
-SET mgs = IF(item = 0, IF(pow(2, money_generators) > cash, money_generators, money_generators + 1), money_generators),
-fgs = IF(item = 1, IF(pow(2, fuel_generators) > cash, fuel_generators, fuel_generators + 1), fuel_generators),
-hospital_level = IF(item = 2, IF(pow(2, hsptl_lvl) > cash, hsptl_lvl, hsptl_lvl + 1), hsptl_lvl),
-money = IF(item = 0, IF(pow(2, money_generators) > cash, cash, cash - pow(2, money_generators)), IF(item = 1, IF(pow(2, fuel_generators) > cash, cash, cash - pow(2, fuel_generators)), IF( item = 2, IF(pow(2, hsptl_lvl) > cash , cash, cash - pow(2, hsptl_lvl)), cash)))
-WHERE id = row_id;
-END
-//
-delimiter ;
-
 delimiter //
 CREATE PROCEDURE purchase_item(row_id INT, item INT)
 this_proc: BEGIN
@@ -178,9 +166,9 @@ SET cost = POW(2, fuel_generators);
 WHEN 2 THEN
 SET cost = POW(2, hsptl_lvl);
 WHEN 3 THEN
-SET cost = POW(2, attack);
+SET cost = 3600 * POW(2, attack);
 WHEN 4 THEN
-SET cost = POW(2, defense);
+SET cost = (3600 / 2) * POW(2, defense);
 END CASE;
 
 UPDATE gamerows
@@ -196,21 +184,16 @@ AND cost <= cash;
 END this_proc
 //
 delimiter ;
-/*ELSIF item = 1 THEN
-    SET flag = IF(POW(2, fuel_generators) <= cash, 1, 0);
-ELSIF item = 2 THEN
-    SET flag = IF(POW(2, hsptl_lvl) <= cash, 1, 0);
-ELSIF item = 3 THEN
-    SET flag = IF(POW(2, attack) <= cash, 1, 0);
-ELSIF item = 4 THEN
-    SET flag = IF(POW(2, defense) <= cash, 1, 0);*/
 
+/* this proc will need to be updated later */
 delimiter //
 CREATE PROCEDURE show_costs(row_id INT)
 BEGIN
 SELECT POW(2, mgs) AS "Next Money", 
 POW(2, fgs) AS "Next Fuel",
-POW(2, hospital_level) AS "Next Hospital"
+POW(2, hospital_level) AS "Next Hospital",
+3600 * POW(2, attack_level) AS "Next Attack",
+(3600 / 2) * POW(2, defense_level) AS "Next Defense"
 FROM gamerows
 WHERE id = row_id;
 END
