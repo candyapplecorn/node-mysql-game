@@ -75,6 +75,7 @@ END
 //
 delimiter ;
 
+/* Just add this to the purchase proc! */
 -- procedure to buy attackers
 delimiter //
 CREATE PROCEDURE buy_attackers(row_id INT, num2buy INT)
@@ -116,14 +117,13 @@ defenders = defenders + healed,
 lastaccessed = now()
 WHERE id >= row_id AND id <= row_id + 9;
 
-IF display != 0 THEN
 SELECT gamerows.ID, gamerows.ownerusername AS Owner, gamerows.defenders + gamerows.attackers AS Forces, gamerows.Money, gamerows.Fuel, gamerows.morale
 FROM gamerows
 LEFT JOIN players
 ON players.id = gamerows.owner
 WHERE gamerows.id >= row_id
-AND gamerows.id <= row_id + 9;
-END IF;
+AND gamerows.id <= row_id + 9
+AND display != 0;
 
 END
 //
@@ -133,11 +133,10 @@ delimiter //
 CREATE PROCEDURE debug_scan(row_id INT, display TINYINT)
 BEGIN
 call scan(row_id, 0);
-IF display != 0 THEN
 SELECT ID, ownerusername AS Owner, Attackers, Defenders, Money, Fuel, MGS, FGS, Hospital, hospital_level AS H_lvl, attack_level AS attack, defense_level AS defense
 FROM gamerows
-WHERE row_id = id;
-END IF;
+WHERE row_id = id
+AND display != 0;
 END
 //
 delimiter ;
@@ -184,7 +183,6 @@ WHEN 4 THEN
 SET cost = POW(2, defense);
 END CASE;
 
-IF cost <= cash THEN 
 UPDATE gamerows
 SET money = money - cost,
 mgs = mgs + IF(item = 0, 1, 0),
@@ -192,8 +190,8 @@ fgs = fgs + IF(item = 1, 1, 0),
 hospital_level = hospital_level + IF(item = 2, 1, 0),
 attack_level = attack + IF(item = 3, 1, 0),
 defense_level = defense + IF(item = 4, 1, 0)
-WHERE id = row_id;
-END IF;
+WHERE id = row_id
+AND cost <= cash;
 
 END this_proc
 //
