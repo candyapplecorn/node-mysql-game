@@ -37,6 +37,7 @@ mgs INT DEFAULT 0 CHECK (MGS >= 0),
 fgs INT DEFAULT 0 CHECK (FGS >= 0),
 dgs INT DEFAULT 0 CHECK (DGS >= 0),
 hospital INT DEFAULT 0 CHECK (hospital >= 0),
+hospital_level INT DEFAULT 0 CHECK (hospital_level >= 0),
 investments INT DEFAULT 0 CHECK (investments >= 0),
 investors VARCHAR(255) DEFAULT '', -- This will be a string containing a JSON object.
 lastattacked DATETIME,
@@ -66,7 +67,7 @@ BEGIN
 	SET owner=user_id, 
 	ownerusername=(SELECT username FROM players WHERE id=user_id),
 	morale=100, defenders=DEFAULT(defenders), attackers=DEFAULT(attackers),
-	money=DEFAULT(money), fuel=DEFAULT(fuel), mgs=DEFAULT(mgs), fgs=DEFAULT(fgs),
+	money=DEFAULT(money), fuel=DEFAULT(fuel), mgs=1, fgs=1,
 	dgs=DEFAULT(dgs), investments=DEFAULT(investments), investors='',
 	lastaccessed=NOW()
 	WHERE id=row_id;
@@ -74,6 +75,7 @@ END
 //
 delimiter ;
 
+/*
 -- updates a given row's money column
 -- drop procedure upd_r_money;
 delimiter //
@@ -103,6 +105,7 @@ where id = row_id;
 END fuel;
 //
 delimiter ;
+
 
 -- updates a given row's lastaccessed column
 -- to do: add in a feature so it wont update if less than a second has passed since lastaccessed
@@ -149,7 +152,7 @@ call upd_r_hospital(row_id);
 call upd_r_access(row_id);
 END;
 //
-delimiter ;
+delimiter ;*/
 
 -- procedure to buy attackers
 delimiter //
@@ -166,8 +169,121 @@ END;
 //
 delimiter ;
 
+/*
+-- this version of scan is outdated and slow.
+delimiter //
+CREATE PROCEDURE scan(row_id INT)
+this_proc: BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE c INT;
+  DECLARE cur1 CURSOR FOR SELECT id FROM gamerows WHERE id >= row_id AND id <= row_id + 9;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+  OPEN cur1;
+
+  read_loop: LOOP
+    FETCH cur1 INTO c;
+    IF done THEN
+        LEAVE read_loop;
+    END IF;
+
+    call upd_all(c);
+
+  END LOOP; 
+
+SELECT ID, defenders + attackers AS Forces, Money, Fuel
+FROM gamerows
+WHERE id >= row_id
+AND id <= row_id + 9;
+
+CLOSE cur1;
+
+END this_proc;
+//
+delimiter ;*/
+
+/*
+Scan takes a row id and updates the corresponding row and the next
+9 corresponding rows.
+
+The parameter "display" is a TINYINT, which is what BOOLEAN is
+an alias for in MySQL, with 0 being false.
+
+	Notes on performance -
+	The previous scan procedure took about 1.2 seconds. This new one
+	often takes as little as .15 seconds.
+	
+	This new version of scan is up to 8 times faster than the 
+	previous version which used a loop and a cursor.
+	
+	To further improve performance, perhaps make periods a 
+	permanent table?
+	
+	Execution time dropped from about .15 seconds to about .9 
+	seconds by removing the "drop temprary table if exists periods"
+	at the end of the procedure, and adding the thus
+	required insert into periods (...) following the
+	create query. So now scan is over 13 times faster
+	than the previous version which used a cursor and loop.
+	
+	This method pretty much obsoletes update_all, and the associated
+	upd_r_ procedures.
+INSERT INTO periods
+(period, healed)
+SELECT
+timestampdiff(second, lastaccessed, now()), 
+IF(timestampdiff(second, lastaccessed, now()) * (1 + hospital_level) > hospital, hospital, timestampdiff(second, lastaccessed, now()) * (1 + hospital_level))
+FROM gamerows
+WHERE id >= row_id AND id <= row_id + 9;
+*/
+delimiter //
+CREATE PROCEDURE scan(row_id INT, display TINYINT)
+BEGIN
+
+DECLARE fuel_rate, money_rate INT DEFAULT 1;
+
+CREATE TEMPORARY TABLE IF NOT EXISTS periods (
+SELECT 
+id, 
+0 AS period, 
+0 AS healed
+FROM gamerows 
+WHERE id >= row_id AND id <= row_id + 9
+);
+
+UPDATE periods AS pr
+JOIN gamerows AS g
+ON g.id = pr.id
+SET pr.period = timestampdiff(second, g.lastaccessed, now()),
+healed = IF(timestampdiff(second, g.lastaccessed, now()) * (1 + g.hospital_level) > g.hospital, g.hospital, timestampdiff(second, g.lastaccessed, now()) * (1 + g.hospital_level))
+WHERE pr.id >= row_id AND pr.id <= row_id + 9;
+
+UPDATE gamerows AS g
+JOIN periods AS pr
+ON pr.id = g.id
+SET g.fuel = g.fuel + (pr.period * fuel_rate * g.fgs),
+g.money = g.money + (pr.period * money_rate * g.mgs),
+g.hospital = g.hospital - pr.healed,
+g.defenders = g.defenders + pr.healed,
+g.lastaccessed = now()
+WHERE g.id >= row_id AND g.id <= row_id + 9;
+
+IF display != 0 THEN
+SELECT gamerows.ID, gamerows.ownerusername, gamerows.defenders + gamerows.attackers AS Forces, gamerows.Money, gamerows.Fuel
+FROM gamerows
+LEFT JOIN players
+ON players.id = gamerows.owner
+WHERE gamerows.id >= row_id
+AND gamerows.id <= row_id + 9;
+END IF;
+
+END
+//
+delimiter ;
+
 -- procedure to test that things are working fine
 -- drop procedure test_row_2;
+/*
 delimiter //
 CREATE PROCEDURE test_row_2()
 BEGIN
@@ -177,6 +293,7 @@ select id, money, fuel, attackers, defenders, hospital from gamerows where id = 
 END;
 //
 delimiter ;
+*/
 
 -- ============================================================
 --      DATABASE INITIALIZATION 
@@ -187,8 +304,8 @@ Now that we've entered our two main tables,
 let's populate them with some values.
 */
 
--- Let's make 50 rows in gamerows. 
-CALL fillgamerows(50);
+-- Let's make some rows in gamerows. 
+CALL fillgamerows(30);
 
 -- Now, we'll insert three players.
 INSERT INTO players (username, password, lastlogin)
