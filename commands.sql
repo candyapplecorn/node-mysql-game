@@ -119,7 +119,7 @@ lastaccessed = now()
 WHERE id >= row_id AND id <= row_id + 9;
 
 IF display != 0 THEN
-SELECT gamerows.ID, gamerows.ownerusername, gamerows.defenders + gamerows.attackers AS Forces, gamerows.Money, gamerows.Fuel
+SELECT gamerows.ID, gamerows.ownerusername, gamerows.defenders + gamerows.attackers AS Forces, gamerows.Money, gamerows.Fuel, gamerows.morale
 FROM gamerows
 LEFT JOIN players
 ON players.id = gamerows.owner
@@ -141,6 +141,7 @@ delimiter //
 CREATE PROCEDURE purchase_generator(row_id INT, item INT)
 BEGIN
 DECLARE hsptl_lvl, money_generators, fuel_generators, cash INT;
+CALL scan(row_id, 0);
 SELECT mgs, fgs, money, hospital_level FROM gamerows WHERE id = row_id INTO money_generators, fuel_generators, cash, hsptl_lvl;
 UPDATE gamerows
 SET mgs = IF(item = 0, IF(pow(2, money_generators) > cash, money_generators, money_generators + 1), money_generators),
@@ -152,6 +153,17 @@ END
 //
 delimiter ;
 
+delimiter //
+CREATE PROCEDURE show_costs(row_id INT)
+BEGIN
+SELECT POW(2, mgs) AS "Next Money", 
+POW(2, fgs) AS "Next Fuel",
+POW(2, hospital_level) AS "Next Hospital"
+FROM gamerows
+WHERE id = row_id;
+END
+//
+delimiter ;
 /*
 Attack a row
 */
