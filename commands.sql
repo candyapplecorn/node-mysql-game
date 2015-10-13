@@ -77,85 +77,6 @@ END
 //
 delimiter ;
 
-/*
--- updates a given row's money column
--- drop procedure upd_r_money;
-delimiter //
-CREATE procedure upd_r_money(row_id int)
-BEGIN
-DECLARE money_rate INT DEFAULT 1;
-DECLARE period INT DEFAULT 0;
-SET period = (select timestampdiff(second, (select lastaccessed from gamerows where id = row_id), now()));
-update gamerows
-set money = money + period * money_rate
-where id = row_id;
-END;
-//
-delimiter ;
-
--- updates a given row's fuel column
--- drop procedure upd_r_fuel;
-delimiter //
-CREATE procedure upd_r_fuel(row_id int)
-fuel: BEGIN
-DECLARE fuel_rate INT DEFAULT 1;
-DECLARE period INT DEFAULT 0;
-SET period = (select timestampdiff(second, (select lastaccessed from gamerows where id = row_id), now()));
-update gamerows
-set fuel = fuel + period * fuel_rate
-where id = row_id;
-END fuel;
-//
-delimiter ;
-
-
--- updates a given row's lastaccessed column
--- to do: add in a feature so it wont update if less than a second has passed since lastaccessed
--- drop procedure upd_r_access;
-delimiter //
-CREATE procedure upd_r_access(row_id int)
-upd_r_access: BEGIN
-UPDATE gamerows
-SET lastaccessed = now()
-WHERE id = row_id;
-END upd_r_access;
-//
-delimiter ;
-
--- updates a given row's hospital column
--- drop procedure upd_r_hospital;
-delimiter //
-CREATE procedure upd_r_hospital(row_id int)
-this_proc: BEGIN
-DECLARE period, chng, hsptl INT DEFAULT 0;
-SET hsptl = (select hospital from gamerows where id = row_id);
-IF hsptl <= 0 THEN
-LEAVE this_proc;
-END IF;
-SET period = (select timestampdiff(second, (select lastaccessed from gamerows where id = row_id), now()));
-SET chng = (select period * (1 + (select hospital_level from players where players.id = row_id)));
-SET chng = (select IF(chng > hsptl, hsptl, chng));
-UPDATE gamerows
-SET defenders = defenders + chng,
-hospital = hospital - chng
-WHERE id = row_id;
-END this_proc;
-//
-delimiter ;
-
--- procedure to update a row
--- drop procedure upd_all;
-delimiter //
-CREATE PROCEDURE upd_all(row_id int)
-BEGIN
-call upd_r_fuel(row_id);
-call upd_r_money(row_id);
-call upd_r_hospital(row_id);
-call upd_r_access(row_id);
-END;
-//
-delimiter ;*/
-
 -- procedure to buy attackers
 delimiter //
 CREATE PROCEDURE buy_attackers(row_id INT, num2buy INT)
@@ -172,66 +93,11 @@ END;
 delimiter ;
 
 /*
--- this version of scan is outdated and slow.
-delimiter //
-CREATE PROCEDURE scan(row_id INT)
-this_proc: BEGIN
-  DECLARE done INT DEFAULT FALSE;
-  DECLARE c INT;
-  DECLARE cur1 CURSOR FOR SELECT id FROM gamerows WHERE id >= row_id AND id <= row_id + 9;
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
-
-  OPEN cur1;
-
-  read_loop: LOOP
-    FETCH cur1 INTO c;
-    IF done THEN
-        LEAVE read_loop;
-    END IF;
-
-    call upd_all(c);
-
-  END LOOP; 
-
-SELECT ID, defenders + attackers AS Forces, Money, Fuel
-FROM gamerows
-WHERE id >= row_id
-AND id <= row_id + 9;
-
-CLOSE cur1;
-
-END this_proc;
-//
-delimiter ;*/
-
-/*
 Scan takes a row id and updates the corresponding row and the next
 9 corresponding rows.
 
 The parameter "display" is a TINYINT, which is what BOOLEAN is
 an alias for in MySQL, with 0 being false.
-
-	Notes on performance -
-	The previous scan procedure took about 1.2 seconds. This new one
-	often takes as little as .15 seconds.
-	
-	This new version of scan is up to 8 times faster than the 
-	previous version which used a loop and a cursor.
-	
-	To further improve performance, perhaps make periods a 
-	permanent table?
-	
-	Execution time dropped from about .15 seconds to about .9 
-	seconds by removing the "drop temprary table if exists periods"
-	at the end of the procedure, and adding the thus
-	required insert into periods (...) following the
-	create query. So now scan is over 13 times faster
-	than the previous version which used a cursor and loop.
-	
-	This method pretty much obsoletes update_all, and the associated
-	upd_r_ procedures.
-
-Edit - removing temporary table all together, and adding "healed" and "period" to gamerows.
 */
 delimiter //
 CREATE PROCEDURE scan(row_id INT, display TINYINT)
@@ -265,20 +131,6 @@ END IF;
 END
 //
 delimiter ;
-
--- procedure to test that things are working fine
--- drop procedure test_row_2;
-/*
-delimiter //
-CREATE PROCEDURE test_row_2()
-BEGIN
-call upd_all(2);
-call buy_attackers(2, 10);
-select id, money, fuel, attackers, defenders, hospital from gamerows where id = 2;
-END;
-//
-delimiter ;
-*/
 
 -- ============================================================
 --      DATABASE INITIALIZATION 
