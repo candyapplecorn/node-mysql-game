@@ -14,10 +14,6 @@ fuel INT DEFAULT 0 CHECK (FUEL >= 0),
 alliance VARCHAR(255) DEFAULT '',       -- For optional alliances (teams)
 rank INT DEFAULT 0,                     -- If we decide to add a level-up / rank system
 alerts INT DEFAULT 0, 
-hospital_level INT DEFAULT 0,
-attack_level INT DEFAULT 0,
-defense_level INT DEFAULT 0,
-/* rowsowned VARCHAR(255) DEFAULT '',*/ -- Not needed in all likelihood.
 lastlogin DATETIME 
 );
 
@@ -38,8 +34,10 @@ fgs INT DEFAULT 0 CHECK (FGS >= 0),
 dgs INT DEFAULT 0 CHECK (DGS >= 0),
 hospital INT DEFAULT 0 CHECK (hospital >= 0),
 hospital_level INT DEFAULT 0 CHECK (hospital_level >= 0),
-healed INT,
-period INT,
+healed INT DEFAULT 0,
+period INT DEFAULT 0,
+attack_level INT DEFAULT 0,
+defense_level INT DEFAULT 0,
 investments INT DEFAULT 0 CHECK (investments >= 0),
 investors VARCHAR(255) DEFAULT '', -- This will be a string containing a JSON object.
 lastattacked DATETIME,
@@ -119,7 +117,7 @@ lastaccessed = now()
 WHERE id >= row_id AND id <= row_id + 9;
 
 IF display != 0 THEN
-SELECT gamerows.ID, gamerows.ownerusername, gamerows.defenders + gamerows.attackers AS Forces, gamerows.Money, gamerows.Fuel, gamerows.morale
+SELECT gamerows.ID, gamerows.ownerusername AS Owner, gamerows.defenders + gamerows.attackers AS Forces, gamerows.Money, gamerows.Fuel, gamerows.morale
 FROM gamerows
 LEFT JOIN players
 ON players.id = gamerows.owner
@@ -131,6 +129,18 @@ END
 //
 delimiter ;
 
+delimiter //
+CREATE PROCEDURE debug_scan(row_id INT, display TINYINT)
+BEGIN
+call scan(row_id, 0);
+IF display != 0 THEN
+SELECT ID, ownerusername AS Owner, Attackers, Defenders, Money, Fuel, MGS, FGS, Hospital, hospital_level AS H_lvl, attack_level AS attack, defense_level AS defense
+FROM gamerows
+WHERE row_id = id;
+END IF;
+END
+//
+delimiter ;
 /*
 Buy a fuel or money generator
 row_id : the row purchasing the item,
@@ -152,6 +162,50 @@ WHERE id = row_id;
 END
 //
 delimiter ;
+
+delimiter //
+CREATE PROCEDURE purchase_item(row_id INT, item INT)
+this_proc: BEGIN
+DECLARE cost, hsptl_lvl, money_generators, fuel_generators, cash, defense, attack INT DEFAULT 0;
+DECLARE flag TINYINT DEFAULT 0;
+CALL scan(row_id, 0);
+SELECT mgs, fgs, money, hospital_level, attack_level, defense_level FROM gamerows WHERE id = row_id INTO money_generators, fuel_generators, cash, hsptl_lvl, defense, attack;
+
+CASE item
+WHEN 0 THEN
+SET cost = POW(2, money_generators);
+WHEN 1 THEN
+SET cost = POW(2, fuel_generators);
+WHEN 2 THEN
+SET cost = POW(2, hsptl_lvl);
+WHEN 3 THEN
+SET cost = POW(2, attack);
+WHEN 4 THEN
+SET cost = POW(2, defense);
+END CASE;
+
+IF cost <= cash THEN 
+UPDATE gamerows
+SET money = money - cost,
+mgs = mgs + IF(item = 0, 1, 0),
+fgs = fgs + IF(item = 1, 1, 0),
+hospital_level = hospital_level + IF(item = 2, 1, 0),
+attack_level = attack + IF(item = 3, 1, 0),
+defense_level = defense + IF(item = 4, 1, 0)
+WHERE id = row_id;
+END IF;
+
+END this_proc
+//
+delimiter ;
+/*ELSIF item = 1 THEN
+    SET flag = IF(POW(2, fuel_generators) <= cash, 1, 0);
+ELSIF item = 2 THEN
+    SET flag = IF(POW(2, hsptl_lvl) <= cash, 1, 0);
+ELSIF item = 3 THEN
+    SET flag = IF(POW(2, attack) <= cash, 1, 0);
+ELSIF item = 4 THEN
+    SET flag = IF(POW(2, defense) <= cash, 1, 0);*/
 
 delimiter //
 CREATE PROCEDURE show_costs(row_id INT)
