@@ -29,8 +29,15 @@ then
     echo "Creating the html5 game database."
     mysql -u$un -p$pw < commands.sql
     echo "html5 game database created."
+elif [[ $# -eq 1 && $1 =~ "remake" || $1 =~ "r" ]];
+then
+    echo "Deleting the html5 game database."
+    mysql -u$un -p$pw -e "drop database html5game;"
+    echo "Creating the html5 game database."
+    mysql -u$un -p$pw < commands.sql
+    echo "html5 game database created."
 else
-    echo "usage: serverSetup.sh [c(reate)|d(elete)]";
+    echo "usage: serverSetup.sh [c(reate)|d(elete)|r(emake)]";
 fi;
 
 # Example of a credentials file:
