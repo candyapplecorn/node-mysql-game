@@ -4,7 +4,7 @@
 # and then runs a bunch of commands in a sql file.
 # To run this script/program: ($ means you enter the command
 # on a command line):
-# $bash serverSetup.sh
+# $bash serverSetup.sh OPTION
 
 # So obviously you need to set up your mysql database first
 # so that you can use it over a command line. IDK if windows
@@ -17,10 +17,8 @@
 # Credentials is a file whose first line is the username,
 # and second line is the password to log in to the db
 
-un=`sed -r -n 's/username.*\s(\w+);/\1/ p' sample.ini`
-pw=`sed -r -n 's/password.*\s(\w+);/\1/ p' sample.ini`
-#un=`sed -n '1 p; 2q' credentials`
-#pw=`sed -n '2 p; 3q' credentials`
+un=`find ../classes/ -type f -name "sample.ini" -exec sed -rn 's/username.*\s(\w+);/\1/ p' {} \;`
+pw=`find ../classes/ -type f -name "sample.ini" -exec sed -rn 's/password.*\s(\w+);/\1/ p' {} \;`
 echo "username: "$un", password: "$pw
 
 if [[ $# -eq 1 && $1 =~ "delete" || $1 =~ "d" ]];
