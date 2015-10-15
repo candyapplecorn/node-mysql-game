@@ -447,9 +447,10 @@ BEGIN
         FROM players
         WHERE usern = username;
     END IF;
-    SELECT CONCAT("User ", usern, " isn't registered!") AS Errmsg
+
+    /*SELECT CONCAT("User ", usern, " isn't registered!") AS Errmsg
     FROM players
-    WHERE usern NOT IN players;
+    WHERE usern NOT IN players;*/
 END
 //
 
