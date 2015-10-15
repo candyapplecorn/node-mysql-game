@@ -9,12 +9,13 @@ CREATE TABLE IF NOT EXISTS players (
 id INT AUTO_INCREMENT NOT NULL PRIMARY KEY, 
 username VARCHAR(255) NOT NULL UNIQUE, 	-- DEFAULT 'defaultusername', 
 password VARCHAR(255) NOT NULL, 	-- DEFAULT '5f4dcc3b5aa765d61d8327deb882cf99', 
+email VARCHAR(255) NOT NULL UNIQUE,
 money INT DEFAULT 0 CHECK (MONEY >= 0),
 fuel INT DEFAULT 0 CHECK (FUEL >= 0),
 alliance VARCHAR(255) DEFAULT '',       -- For optional alliances (teams)
 rank INT DEFAULT 0,                     -- If we decide to add a level-up / rank system
 alerts INT DEFAULT 0, 
-lastlogin DATETIME 
+lastlogin DATETIME DEFAULT '2015-01-01 00:00:00'
 );
 
 /*
@@ -219,9 +220,22 @@ END this_proc
 
 /*
 We need a procedure to allow a player to start a new row
+Will use select count(owner) from gamerows where owner = source_row.owner
 */
 CREATE PROCEDURE found_new_row (source_row INT, new_row INT)
 BEGIN
+    DECLARE cash, numrows, cost, userid INT;
+    SELECT POW(COUNT(owner), COUNT(owner)), owner, money
+    FROM gamerows as a
+    WHERE owner = (SELECT owner FROM gamerows WHERE id = source_row)
+    INTO cost, userid, cash;
+
+    IF cash >= cost AND (SELECT morale FROM gamerows WHERE id = new_row) < 1 THEN
+	    UPDATE gamerows
+	    SET money = money - cost
+        WHERE id = source_row;
+	    CALL grantrow(new_row, userid);  
+    END IF;
 END
 //
 
@@ -311,10 +325,15 @@ this_proc: BEGIN
     SELECT owner, attackers + defenders, defense_level, money, fuel FROM gamerows WHERE id = destination_row INTO defending_player, defending_forces, def_lvl, dmoney, dfuel;
     SELECT distance * attackers_sent INTO fuel_cost;
 
+    /* Update the two fighting rows */
+    CALL scan(source_row, 0);
+    CALL scan(destination_row, 0);
+
 IF fuel_cost > attacker_fuel OR attackers_sent > attacker_home_forces OR attacking_player < 1 THEN
     LEAVE this_proc;
 END IF;
 
+/* The player is transferring troops */
 IF attacking_player = defending_player THEN
     UPDATE gamerows as g
     SET g.attackers = g.attackers - attackers_sent,
@@ -323,13 +342,18 @@ IF attacking_player = defending_player THEN
     UPDATE gamerows as g
     SET g.attackers = g.attackers + attackers_sent
     WHERE id = destination_row;
+
+/* The player is attacking an empty row */
 ELSEIF defending_player < 1 THEN
     select "There's nobody here!";
+
+/* The player is attacking another player! */
 ELSEIF attacking_player != defending_player AND defending_player > 0 THEN
     SET AF = attackers_sent * POW(1.2, att_lvl);
     SET DF = defending_forces * POW(1.2, def_lvl);
     SET CF = AF - DF;
 
+    /* Victory for the attacker */
     IF CF >= 0 THEN
         SET AF = CF,
         money_loot = IF(AF * 50 > dmoney, dmoney, AF * 50), 
@@ -355,11 +379,12 @@ ELSEIF attacking_player != defending_player AND defending_player > 0 THEN
         morale = morale + IF(morale < 90, RAND() * 5, 0)
         WHERE id = source_row;
 
-        /* if the defender's row has its morale brought to 0, destroy it. */
-        IF (SELECT morale FROM gamerows WHERE id = destination_row) <= 0 THEN
+        /* if the defender's row has its morale brought below 1, destroy it. */
+        IF (SELECT morale FROM gamerows WHERE id = destination_row) < 1 THEN
             CALL destroy_row(source_row, destination_row);
         END IF;
 
+    /* The attacker lost the battle */
     ELSEIF CF < 0 THEN
         /* The attacker has been defeated so doesn't receive any loot */
         /* Nor does the attacking player recieve a cut of the losses */
@@ -382,6 +407,60 @@ END IF;
 END this_proc
 //
 
+-- ============================================================
+--     USER MANAGEMENT 
+-- ============================================================
+
+CREATE PROCEDURE add_user(usern VARCHAR(255), passw VARCHAR(255), em VARCHAR(255))
+BEGIN
+INSERT INTO players (username, password, email)
+VALUES (usern, (select md5(passw)), em);
+END
+//
+
+CREATE PROCEDURE remove_user(usern VARCHAR(255))
+BEGIN
+DELETE FROM players
+WHERE username = usern;
+END
+//
+
+CREATE PROCEDURE login(usern VARCHAR(255), passw VARCHAR(255))
+BEGIN
+    DECLARE idnum INT DEFAULT 0;
+
+    SELECT id
+    FROM players
+    WHERE username = "joe"
+    AND password = md5(passw)
+    INTO idnum;
+
+    /* If the user was found */
+    IF idnum != 0 THEN
+	    UPDATE players
+	    SET lastlogin = NOW()
+	    WHERE id = idnum;
+
+	    SELECT "User found!";
+    ELSE
+        SELECT CONCAT("Incorrect password, ", username, ".") AS Username
+        FROM players
+        WHERE usern = username;
+    END IF;
+    SELECT CONCAT("User ", usern, " isn't registered!") AS Errmsg
+    FROM players
+    WHERE usern NOT IN players;
+END
+//
+
+CREATE PROCEDURE set_alerts(usern VARCHAR(255), switch TINYINT)
+BEGIN
+UPDATE players
+SET alerts = IF(switch != 0, 1, 0)
+WHERE username = usern;
+END
+//
+
 delimiter ;
 
 -- ============================================================
@@ -397,12 +476,9 @@ let's populate them with some values.
 CALL fillgamerows(30);
 
 -- Now, we'll insert three players.
-INSERT INTO players (username, password, lastlogin)
-VALUES ("Alex", (select md5("password")), NOW());
-INSERT INTO players (username, password, lastlogin)
-VALUES ("Joe", (select md5("betterpassword")), NOW());
-INSERT INTO players (username, password, lastlogin)
-VALUES ("Nick", (select md5("bestpassword")), NOW());
+call add_user("Alex", "password", "alex@alex.ru");
+call add_user("Joe", "betterpassword", "joe@joe.org");
+call add_user("Nick", "bestpassword", "nick@nick.net");
 
 -- Now, let's give them some rows!
 -- Give three rows to Alex
