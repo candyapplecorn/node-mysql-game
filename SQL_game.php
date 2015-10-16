@@ -1,3 +1,4 @@
+<?PHP include "scripts/headers.php"; ?>
 <!DOCTYPE html>
 <html lang="en" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/Article">
 <head>
@@ -31,6 +32,8 @@
       </ul>
     </section>
   </nav>
+  <?PHP include "scripts/user_auth.php"; ?>
+  <!--
   <nav class="top-bar secondary login" data-topbar role="navigation">
     <div class="row full">
       <h2 class="header-pop-up">Login</h2>
@@ -69,6 +72,7 @@
       </form>
     </section>
   </nav>
+  -->
 <!-- End Header -->
 <!-- Main -->
   <div class="main">

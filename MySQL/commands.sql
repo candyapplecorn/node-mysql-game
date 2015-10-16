@@ -80,7 +80,7 @@ END
 delimiter //
 CREATE PROCEDURE purchase_attackers(row_id INT, num2buy INT)
 BEGIN
-DECLARE attacker_cost, cost_per_attacker INT DEFAULT 2;
+DECLARE attacker_cost, cost_per_attacker INT DEFAULT 100;
 SET attacker_cost =  (SELECT ABS(num2buy * cost_per_attacker));
 UPDATE gamerows
 SET money = money - attacker_cost,
@@ -413,8 +413,59 @@ END this_proc
 
 CREATE PROCEDURE add_user(usern VARCHAR(255), passw VARCHAR(255), em VARCHAR(255))
 BEGIN
+    DECLARE newuserid, newuserfirstrow INT DEFAULT 0;
 INSERT INTO players (username, password, email)
 VALUES (usern, (select md5(passw)), em);
+
+WHILE newuserfirstrow = 0 OR newuserfirstrow > (SELECT COUNT(id) FROM gamerows) DO
+    SELECT find_new_user_first_row() INTO newuserfirstrow;
+    IF newuserfirstrow = 0 OR newuserfirstrow > (SELECT COUNT(id) FROM gamerows) THEN
+        SELECT "Calling fillgamerows";
+        CALL fillgamerows(10);
+    END IF;
+END WHILE;
+SELECT id FROM players WHERE username = usern INTO newuserid;
+
+CALL grantrow(newuserfirstrow, newuserid);
+END
+//
+
+CREATE FUNCTION find_new_user_first_row()
+RETURNS INT
+BEGIN
+DECLARE num, max, found, curr, step INT;
+SET curr = 0, step = 10, found = 0;
+SELECT COUNT(ID) FROM gamerows INTO max;
+
+WHILE found = 0 AND step > step - 2 DO
+
+    WHILE found = 0 AND found < max DO
+        SELECT count(owner) FROM gamerows
+        WHERE id >= curr AND id <= curr + step AND owner != 0
+        INTO num;
+
+        /* We've found a spot for the player! */
+        IF num <= 1 THEN
+            SET found = curr + ROUND(RAND() * step);
+            WHILE (SELECT id FROM gamerows WHERE owner != 0 AND id >= curr AND id <= curr + step) = found DO
+                SET found = curr + ROUND(RAND() * step);
+            END WHILE;
+        END IF;
+
+        SET curr = curr + step;
+    END WHILE;
+    /* check to see if we couldn't find a spot */
+    IF found = 0 THEN
+        SET step = step - 1;
+    END IF;
+
+END WHILE;
+
+IF found = 0 THEN
+    SET found = found;/*SELECT "You need to add more rows.";*/
+END IF;
+
+RETURN found;
 END
 //
 
@@ -481,6 +532,7 @@ call add_user("Alex", "password", "alex@alex.ru");
 call add_user("Joe", "betterpassword", "joe@joe.org");
 call add_user("Nick", "bestpassword", "nick@nick.net");
 
+/*
 -- Now, let's give them some rows!
 -- Give three rows to Alex
 CALL grantrow(5, 1);
@@ -512,4 +564,4 @@ WHERE id = 5;
 UPDATE gamerows
 SET attackers = 200,
 money = 20000
-WHERE id = 6;
+WHERE id = 6;*/

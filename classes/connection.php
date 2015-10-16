@@ -1,2 +1,2 @@
 <?PHP
-/* echo "dude"; */
+$ini_array = parse_ini_file("sample.ini");
