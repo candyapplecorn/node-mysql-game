@@ -17,9 +17,9 @@
 # Credentials is a file whose first line is the username,
 # and second line is the password to log in to the db
 
-un=`find ../classes/ -type f -name "sample.ini" -exec sed -rn 's/username.*\s(\w+);/\1/ p' {} \;`
-pw=`find ../classes/ -type f -name "sample.ini" -exec sed -rn 's/password.*\s(\w+);/\1/ p' {} \;`
-echo "username: "$un", password: "$pw
+cd MySQL/
+un=`find . -type f -name "credentials" -exec sed -rn 's/username.*\s(\w+);/\1/ p' {} \;`
+pw=`find . -type f -name "credentials" -exec sed -rn 's/password.*\s(\w+);/\1/ p' {} \;`
 
 if [[ $# -eq 1 && $1 =~ "delete" || $1 =~ "d" ]];
 then
