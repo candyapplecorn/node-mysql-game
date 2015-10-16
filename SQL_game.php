@@ -11,6 +11,10 @@
   <link rel="stylesheet" type="text/css" href="pub/css/style.css">
   <link rel="icon" href="pub/img/favicon.ico" type="image/x-icon">
   <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+    <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js" type="text/javascript"></script>
+    <script src="javascripts/jquery/jquery.growl.js" type="text/javascript"></script>
+    <link href="stylesheets/jquery.growl.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -24,8 +28,8 @@
     </ul>
     <section class="top-bar-section">
       <ul class="right">
-        <li class=""><a href="#">Login</a></li>
-        <li class=""><a href="#">Sign Up</a></li>
+        <?PHP include "scripts/".(isset($_SESSION["name"]) && $_SESSION["name"] != "" ? "logout" : "login").".php"; ?>
+        <li id="signup" class=""><a href="#">Sign Up</a></li>
       </ul>
       <ul class="left">
         <li><a href="#" class="donate">Donate!</a></li>
@@ -33,46 +37,6 @@
     </section>
   </nav>
   <?PHP include "scripts/user_auth.php"; ?>
-  <!--
-  <nav class="top-bar secondary login" data-topbar role="navigation">
-    <div class="row full">
-      <h2 class="header-pop-up">Login</h2>
-      <form>
-        <ul class="">
-          <li class="small-6 medium-6 columns">
-            <label>Username</label><input>
-          </li>
-          <li class="small-6 medium-6 columns">
-            <label>Password</label><input>
-          </li>
-        </ul>
-        <button class="button right">Submit</button>
-      </form>
-    </section>
-  </nav>
-  <nav class="top-bar secondary sign-up" data-topbar role="navigation">
-    <div class="row full">
-    <h2 class="header-pop-up">Sign Up</h2>
-      <form>
-        <ul class="">
-          <li class="small-6 medium-3 columns">
-            <label>Email</label><input>
-          </li>
-          <li class="small-6 medium-3 columns">
-            <label>Username</label><input>
-          </li>
-          <li class="small-6 medium-3 columns">  
-            <label>Password</label><input>
-          </li>
-          <li class="small-6 medium-3 columns">
-            <label>Confirm Password</label><input>
-          </li>
-        </ul>
-        <button class="button right">Submit</button>
-      </form>
-    </section>
-  </nav>
-  -->
 <!-- End Header -->
 <!-- Main -->
   <div class="main">
@@ -204,5 +168,8 @@
 <!-- Script Tags -->
   <script src="pub/js/foundation.min.js"></script>
   <script src="pub/js/script.js"></script>
+<script>
+
+</script>
 </body>
 </html>

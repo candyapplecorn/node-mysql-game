@@ -18,8 +18,8 @@
 # and second line is the password to log in to the db
 
 cd MySQL/
-un=`find . -type f -name "credentials" -exec sed -rn 's/username.*\s(\w+);/\1/ p' {} \;`
-pw=`find . -type f -name "credentials" -exec sed -rn 's/password.*\s(\w+);/\1/ p' {} \;`
+un=`find . -type f -name "credentials.ini" -exec sed -rn 's/user.*\s(\w+);/\1/ p' {} \;`
+pw=`find . -type f -name "credentials.ini" -exec sed -rn 's/password.*\s(\w+);/\1/ p' {} \;`
 
 if [[ $# -eq 1 && $1 =~ "delete" || $1 =~ "d" ]];
 then

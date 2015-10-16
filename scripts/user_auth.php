@@ -25,10 +25,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         /* begin actual database login stuff */
         if ( ($_POST['Password']) && ($_POST['Username'])) {
+            $auth = new Authentication();
+            $auth->Login(test_input($_POST['Username']), test_input($_POST['Password']));
+            unset ($_POST['Password']);
+            unset ($_POST['Username']);
+            //unset ($_SESSION['Username']);
+            //unset ($_SESSION['Password']);
         }
     }
     
     /* The user just hit the Submit button for register */
+
     if ($_POST['TYPE'] == "REGISTER"){
         if ( !($_POST['registerEmail']) ){
             $registererrors[2]='<small class="error">Please supply an email.</small>';
@@ -63,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 ?>
 
-<nav class="top-bar secondary login" data-topbar role="navigation">
+<nav id="loginform" class="top-bar secondary login" data-topbar role="navigation" >
   <div class="row full">
     <h2 class="header-pop-up">Login</h2>
       <form name="login" action="<?PHP echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -86,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </section>
 </nav>
 
-<nav class="top-bar secondary sign-up" data-topbar role="navigation">
+<nav id="signupform" class="top-bar secondary sign-up" data-topbar role="navigation">
   <div class="row full">
   <h2 class="header-pop-up">Sign Up</h2>
     <form name="register" action="<?PHP echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -114,3 +121,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </form>
   </section>
 </nav>
+
+<script>
+    document.getElementById("signup").addEventListener('click', function(){
+        var self =  document.getElementById("signupform");
+        self.style.visibility = self.style.visibility == "hidden" ? "visible" : "hidden";
+        /*$(document).foundation();
+        $(document).foundation('reflow');*/
+    });
+    document.getElementById("login").addEventListener('click', function(){
+        var self =  document.getElementById("loginform");
+        self.style.visibility = self.style.visibility == "hidden" ? "visible" : "hidden";
+        /*$(document).foundation();
+        $(document).foundation('reflow');*/
+    });
+</script>
