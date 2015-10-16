@@ -10,7 +10,7 @@ function test_input($data) {
     return $data;
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") { 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && !$_SESSION["id"]) { 
     /* The user just hit the Submit button for login */
     if ($_POST['TYPE'] == "LOGIN"){
         if ( !($_POST['Username'])) {
@@ -29,8 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $auth->Login(test_input($_POST['Username']), test_input($_POST['Password']));
             unset ($_POST['Password']);
             unset ($_POST['Username']);
-            //unset ($_SESSION['Username']);
-            //unset ($_SESSION['Password']);
+            unset ($_SESSION['Username']);
+            unset ($_SESSION['Password']);
         }
     }
     

@@ -11,7 +11,8 @@ function Login($Username,$Password)
 {
     // Check if parameters are blank
     if($Username=='' || $Password=='') {
-        Alerts::show("Please fill out all required fields.", "error");
+        Alerts::addNewAlert("Please fill out all required fields.", "error");
+        return;
     }
 
     // Check and see if there were any matches in the result.
@@ -22,19 +23,20 @@ function Login($Username,$Password)
     $Login_Result = $this->Connection->Custom_Query("SELECT * FROM players WHERE Username=:Username", $Login_Array);
 
     if (empty($Login_Result) || $pw["pw"] != $Login_Result['password']) {
-        Alerts::show("Username and Password combination is incorrect.", "Error!", "error");
+        Alerts::addNewAlert("Username and Password combination is incorrect.", "error");
+        return;
     }
     
     //Login is successful
     //Update the DB for the date of the login.
     $Last_Login_Array = array(':Account_Last_Login'=>date(self::DATE_FORMAT),':ID'=>$_SESSION['ID']);
     $this->Connection->Custom_Execute("UPDATE players SET lastlogin =:Account_Last_Login WHERE ID=:ID",$Last_Login_Array);
-    // Display success toast.
-    if (!isset($_SESSION["id"])){
-        Alerts::show("You have logged in as " . $_SESSION['Name'], "Success!", "notice");
-    }
     $_SESSION["name"] = $Login_Result["username"];
     $_SESSION["id"] = $Login_Result["id"];
+    // Display success toast.
+    //if (!isset($_SESSION["id"])){
+        Alerts::addNewAlert("You have logged in as " . $_SESSION['name'], "notice");
+    //}
     // Redirect user to homepage.
     header( 'Location: /php-mysql-game/SQL_game.php');
 }

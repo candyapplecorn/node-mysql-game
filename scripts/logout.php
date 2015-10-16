@@ -3,6 +3,7 @@ if ($_GET["argument"]=='logOut'){
     if(session_id() == '') {
         session_start();
     }
+    //include "../classes/alerts.php";
     session_unset();
     session_destroy();
     UNSET($_SESSION["id"]);
