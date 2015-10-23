@@ -28,7 +28,7 @@
     </ul>
     <section class="top-bar-section">
       <ul class="right">
-        <?PHP echo $_SESSION["name"] ? '<li id="signup" class=""><a href="#">Hello, '.$_SESSION['name'].'!</a></li>' : ""; ?>
+        <?PHP echo isset($_SESSION["name"]) ? '<li id="signup" class=""><a href="#">Hello, '.$_SESSION['name'].'!</a></li>' : ""; ?>
         <?PHP include "scripts/".(isset($_SESSION["name"]) && $_SESSION["name"] != "" ? "logout" : "login").".php"; ?>
         <li id="signup" class=""><a href="#">Sign Up</a></li>
       </ul>
@@ -37,7 +37,7 @@
       </ul>
     </section>
   </nav>
-  <?PHP if (!$_SESSION["id"]) include "scripts/user_auth.php"; ?>
+  <?PHP if (!isset($_SESSION["id"])) include "scripts/user_auth.php"; ?>
 <!-- End Header -->
 <!-- Main -->
   <div class="main">

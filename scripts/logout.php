@@ -1,12 +1,12 @@
 <?PHP
-if ($_GET["argument"]=='logOut'){
+if (isset($_GET["argument"]) && $_GET["argument"]=='logOut'){
     if(session_id() == '') {
         session_start();
     }
     //include "../classes/alerts.php";
     session_unset();
     session_destroy();
-    UNSET($_SESSION["id"]);
+    //UNSET($_SESSION["id"]);
     $link = "/php-mysql-game/SQL_game.php";
     echo $link; 
 }
