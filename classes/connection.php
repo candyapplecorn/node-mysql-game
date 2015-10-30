@@ -22,6 +22,7 @@ class Connection
     function Custom_Query($query_string,$query_array,$ALL=false)
     {
 
+	$PDO_Results;
         try {
             $PDO_Prepped = $this->PDO_Connection->prepare($query_string);
             $PDO_Prepped->execute($query_array);
