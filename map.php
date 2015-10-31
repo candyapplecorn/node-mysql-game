@@ -14,6 +14,10 @@ if(isset($_POST['f_id'])&&ctype_digit($_POST['f_id'])){
 $l_id=$f_id+9;
 $conn = new Connection();
 
+$qarr = Array('f_id'=>$f_id);
+$qstr = "CALL scan(:f_id, 0)";
+$conn->Custom_Query($qstr, $qarr, TRUE);
+
 // Make a query that returns multiple rows; each row is stores as an array; result is a multi-d array
 $qstr = "SELECT gamerows.ID, gamerows.ownerusername AS Owner, gamerows.defenders + gamerows.attackers AS Forces, gamerows.Money, gamerows.Fuel, ROUND(gamerows.morale) AS Morale
 FROM gamerows
