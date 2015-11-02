@@ -36,5 +36,5 @@ if($flag){
 }
 include "map.php";
 include "ownedrows.php";
-	
+
 ?>
