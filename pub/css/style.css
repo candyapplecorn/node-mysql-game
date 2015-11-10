@@ -1,3 +1,7 @@
+body{
+	min-width: 858px;
+}
+
 /* HEADER */
 ul li a.donate{
 	color:#999;
@@ -30,9 +34,16 @@ nav.top-bar.secondary ul{
 	margin:15px 30px;
 }
 
+.secondary.sign-up{
+	display:none;
+}
+.secondary.login{
+	display:none;
+}
+
 /* MAIN */
 .outward{
-	margin:20px 0;
+	margin:40px auto 20px;
 	border-bottom: 1px solid #bbb;
 }
 div.sidebar a.button.small{
@@ -49,4 +60,14 @@ td{
 }
 .numbers{
 	text-align: right;
+}
+.add input{
+	display: inline-block;
+	margin: 0 auto;
+	text-align: center;
+	width: 100%;
+}
+.add button{
+	margin: 4px auto;
+	width: 100%;
 }
