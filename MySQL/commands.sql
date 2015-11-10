@@ -414,6 +414,7 @@ END this_proc
 CREATE PROCEDURE add_user(usern VARCHAR(255), passw VARCHAR(255), em VARCHAR(255))
 BEGIN
     DECLARE newuserid, newuserfirstrow INT DEFAULT 0;
+    DECLARE EXIT HANDLER FOR 1062 SELECT "username taken!";
 INSERT INTO players (username, password, email)
 VALUES (usern, (select md5(passw)), em);
 
