@@ -1,5 +1,7 @@
 body{
 	min-width: 858px;
+	width: 100%;
+	background-image: url(../img/stickwar.jpg);
 }
 
 /* HEADER */
@@ -43,7 +45,7 @@ nav.top-bar.secondary ul{
 
 /* MAIN */
 .outward{
-	margin:40px auto 20px;
+	margin:18px auto 20px;
 	border-bottom: 1px solid #bbb;
 }
 div.sidebar a.button.small{
@@ -70,4 +72,12 @@ td{
 .add button{
 	margin: 4px auto;
 	width: 100%;
+}
+.sectionHeader{
+	color:#007095;
+	background-color: #f4f4f4;
+	font-weight: 700;
+	padding-top: 18px;
+	padding-bottom: 15px;
+	letter-spacing: .13em;
 }
