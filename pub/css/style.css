@@ -1,7 +1,8 @@
 body{
-	min-width: 858px;
+	min-width: 878px;
 	width: 100%;
 	background-image: url(../img/stickwar.jpg);
+	letter-spacing: 1.25px
 }
 
 /* HEADER */
@@ -48,17 +49,20 @@ nav.top-bar.secondary ul{
 	margin:18px auto 20px;
 	border-bottom: 1px solid #bbb;
 }
-div.sidebar a.button.small{
-	border:3px solid #fff;
+div.sidebar div.button.small{
+	margin: 8px;
+	border:1px solid #444;
 }
 
 /*TABLE*/
 table{
 	width:100%;
 	padding:0;
+	letter-spacing: .8px;
+	border:1px solid #777;
 }
 td{
-	border:1px solid #ccc;
+	border:1px solid #777;
 }
 .numbers{
 	text-align: right;
@@ -73,11 +77,45 @@ td{
 	margin: 4px auto;
 	width: 100%;
 }
+.button{
+	margin-bottom: 0px;
+	margin-top: 15px;
+}
+.button.small{
+		padding: 10px 15px;
+}
 .sectionHeader{
 	color:#007095;
 	background-color: #f4f4f4;
+	border:1px solid #777;
+	border-right: 0px;
+	border-left: 0px;
 	font-weight: 700;
 	padding-top: 18px;
 	padding-bottom: 15px;
 	letter-spacing: .13em;
+}
+.buttonHeader{
+	font-weight: 500;
+	font-size: 15px;
+	letter-spacing: 6px;
+}
+.buttonField{
+	background-color: #485458;
+	padding: 5px;
+	margin: 0px 3px 0px;
+	text-align: center;
+	overflow: hidden;
+	letter-spacing: .2em;
+}
+.buttonField input{
+	width:70px;
+	color: #333;
+}
+.buttonField span.cost{
+	margin: 20px;
+}
+
+.row.full.buttons{
+	padding: 0px 20px;
 }

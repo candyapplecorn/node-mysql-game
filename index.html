@@ -79,7 +79,7 @@
   <br/>
   <h3 class="sectionHeader">&nbsp;&nbsp;&nbsp;Playing Field:</h3>
     <div class="row full outward">
-      <div class="content right small-12 medium-9 columns">
+      <div class="content right small-12 medium-12 columns">
         <table>
           <thead>
             <tr>
@@ -150,17 +150,67 @@
           </tbody>
         </table>
       </div>
-      <div class="sidebar small-12 medium-3 columns">
-        <div class="row full">
-          <a href="#" class="small-4 medium-12 columns button small">Scan</a>
-          <div>
-
+      <div class="sidebar small-12 medium-12 columns">
+        <div class="row full buttons">
+          <div href="#" class="small-3 medium-2 columns button small  right">
+          <span class="buttonHeader">Buy Row</span><br/><br/>
+            <div class="buttonField">
+              <input name="#" value="XXX">
+            </div>
+            <br/>
+            <span class="cost"> cost:XXX </span>
+            <button class="button success small" > Buy </button>
           </div>
-          <a href="#" class="small-4 medium-12 columns button small">Transport</a>
-          <a href="#" class="small-4 medium-12 columns button small">Attack</a>
+          <div href="#" class="small-3 medium-3 columns button small  right">
+          <span class="buttonHeader">Transport</span><br/><br/>
+            <div class="buttonField">
+              <div class="right">
+                <span> Source </span><input  name="#" value="XXX">
+              </div>
+              <div class="right">
+                <span> Target </span><input  name="#" value="XXX">
+              </div>
+              <div class="right">
+                <span> Money </span><input  name="#" value="XXX">
+              </div>
+              <div class="right">
+                <span> Fuel </span><input  name="#" value="XXX">
+              </div>
+              <div class="right">
+                <span> Attackers </span><input  name="#" value="XXX">
+              </div>
+            </div>
+            <span class="cost"> cost:XXX </span>&nbsp;&nbsp;
+            <button class="button success small" > Move </button>
+          </div>
+          <div href="#" class="small-3 medium-3 columns button small  right">
+          <span class="buttonHeader">Attack</span><br/><br/>
+            <div class="buttonField">
+              <div class="right">
+                <span> Source </span><input  name="#" value="XXX">
+              </div>
+              <div class="right">
+                <span> Target </span><input  name="#" value="XXX">
+              </div>
+              <div class="right">
+                <span> Attackers </span><input  name="#" value="XXX">
+              </div>
+            </div>
+            <span class="cost"> cost:XXX </span>&nbsp;&nbsp;
+            <button class="button success small" > Attack </button>
+          </div>
+          <div href="#" class="small-3 medium-3 columns button small right">
+         <span class="buttonHeader">Scan</span><br/><br/>
+            <div class="buttonField">
+              <input  name="#" value="xxx"><span> to XXX </span>
+            </div>
+          <span class="cost"> cost:XXX </span>&nbsp;&nbsp;
+          <button class="button success small" > Scan </button>
+          </div>
         </div>
       </div>
     </div>
+    <br/>
     <h3 class="sectionHeader">&nbsp;&nbsp;&nbsp;Your Rows:</h3>
     <div class="row full">
       <div class="content left small-12 medium-12 columns">
@@ -308,6 +358,8 @@
         </table>
       </div>
     </div>
+    <br/>
+    <br/>
   </div>
 <!-- Script Tags -->
   <script src="pub/js/foundation.min.js"></script>
