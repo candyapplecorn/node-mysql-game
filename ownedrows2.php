@@ -1,11 +1,11 @@
 <?PHP
 include "scripts/headers.php";
+?>
+<?PHP
 
 // In the game, the user, if logged in, will have name and id inside $_SESSION
 // however since this is a one page demo we did in the meeting, i just hard-coded
 // $_SESSION name and ID. -- Normally, again, login would set session for us.
-//$_SESSION["name"] = "nick";
-//$_SESSION["id"] = 3;
 $conn = new Connection();
 
 // Get each row we want to update (the user's owned rows)
@@ -21,7 +21,7 @@ foreach ($results AS $value){
 }
 
 // Make a query that returns multiple rows; each row is stores as an array; result is a multi-d array
-$qstr = "SELECT ID, ownerusername AS Owner, Attackers, Defenders, Money, Fuel, MGS, FGS, Hospital, hospital_level AS H_lvl, attack_level AS attack, defense_level AS defense
+$qstr = "SELECT ID, ownerusername AS Owner, Attackers, Defenders, Money, Fuel, Hospital, MGS, FGS, hospital_level AS H_lvl, attack_level AS attack, defense_level AS defense
 FROM gamerows
 WHERE ownerusername = :name";
 $qarr = Array(':name'=>$_SESSION["name"]);
@@ -44,15 +44,53 @@ foreach($results as $key=>$value) {
 $TableHeaders .= "</TR>";
 ?>
 
+<?PHP
+	// THIS STRING CONTAINS THE INPUTS FOR INTERACTING WITH ROWS SUCH AS
+	// BUYING ITEMS, AND ATTACKERS
+	$formsString = '
+	<tr>
+	<td></td>
+	<td class="add"></td>
+	<td class="add"></td>
+	<td class="add"></td>
+	<td class="add"></td>
+	<td class="add"></td>
+	<td class="add"></td>
+	<td class="add">
+	<input>
+	<button class="button tiny">Buy</button>
+	</td>
+	<td class="add">
+	<input>
+	<button class="button tiny">Buy</button>
+	</td>
+	<td class="add">
+	<input>
+	<button class="button tiny">Buy</button>
+	</td>
+	<td class="add">
+	<input>
+	<button class="button tiny">Buy</button>
+	</td>
+	<td class="add">
+	<input>
+	<button class="button tiny">Buy</button>
+	</td>
+	</tr>';
+?>
+
 <!-- THIS IS THE VIEW - IT IS WHAT THE USER SEES -->
 <table id = "myrows">
 <?PHP 
 	echo $TableHeaders;
 	foreach ($TableRows as $key) 
-		echo $key; 
+		echo $key . $formsString; 
 ?>
-</table>
 
+
+
+
+<!--</table>-->
 
 
 
