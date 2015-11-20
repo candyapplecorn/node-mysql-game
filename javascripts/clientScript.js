@@ -7,8 +7,10 @@ var socket = io();
 /*
 For debugging purposes, set username and password to Alex's
 */
-$("#login-box div form li:nth-child(1) input").val('alex');
-$("#login-box div form li:nth-child(2) input").val('password');
+if (false){
+    $("#login-box div form li:nth-child(1) input").val('alex');
+    $("#login-box div form li:nth-child(2) input").val('password');
+}
 /*
 Attach an event listener to the login button. When clicked, it will
 send the contents of the username and password fields to app.js. Then
@@ -58,7 +60,6 @@ $(button).click(function(event){
     event.preventDefault();
     if ($.isNumeric($(input).val())) {
         socket.emit('scan', $(input).val());
-        console.log("scanning row " + $(input).val());
     }
     $(input).val('');
 });
