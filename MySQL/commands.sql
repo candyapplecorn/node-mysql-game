@@ -151,7 +151,7 @@ this_proc: BEGIN
 DECLARE cost, hsptl_lvl, money_generators, fuel_generators, cash, defense, attack INT DEFAULT 0;
 DECLARE flag TINYINT DEFAULT 0;
 CALL scan(row_id, 0);
-SELECT mgs, fgs, money, hospital_level, attack_level, defense_level FROM gamerows WHERE id = row_id INTO money_generators, fuel_generators, cash, hsptl_lvl, defense, attack;
+SELECT mgs, fgs, money, hospital_level, attack_level, defense_level FROM gamerows WHERE id = row_id INTO money_generators, fuel_generators, cash, hsptl_lvl, attack, defense;
 
 CASE item
 WHEN 0 THEN
@@ -483,7 +483,7 @@ BEGIN
 
     SELECT id
     FROM players
-    WHERE username = "joe"
+    WHERE username = usern
     AND password = md5(passw)
     INTO idnum;
 

@@ -1,0 +1,36 @@
+{
+  "name": "php-mysql-game",
+  "version": "1.0.0",
+  "description": "A webgame with a backend by De Anza Developers' Guild",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/candyapplecorn/php-mysql-game.git"
+  },
+  "keywords": [
+    "nodejs",
+    "php",
+    "mysql",
+    "html"
+  ],
+  "author": "Joseph Burger, Nick, and Alex",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/candyapplecorn/php-mysql-game/issues"
+  },
+  "homepage": "https://github.com/candyapplecorn/php-mysql-game",
+  "dependencies": {
+    "bluebird": "^3.0.5",
+    "cookie-parser": "^1.4.0",
+    "express": "^4.13.3",
+    "express-sequelize-session": "^0.4.0",
+    "express-session": "^1.12.1",
+    "mime": "^1.3.4",
+    "mysql": "^2.9.0",
+    "sequelize": "^3.14.0",
+    "socket.io": "^1.3.7"
+  }
+}
