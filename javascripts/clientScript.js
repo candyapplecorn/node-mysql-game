@@ -21,9 +21,15 @@ the fields will be cleared
 
 $(button).click(function(event){ 
     event.preventDefault();
-    socket.emit('login', [$(password).prop('value'), $(username).prop('value')]);
-    $(password).val('');
-    $(username).val('');
+    if ($('#login').prop('text').toString().search("In") != -1 && $(username).prop('value') != '') {
+        socket.emit('login', [$(password).prop('value'), $(username).prop('value')]);
+        $(password).val('');
+        $(username).val('');
+    }
+});
+$('#login').click(function(event){
+    if ($('#login').prop('text').toString().search("In") == -1)
+        socket.emit('logout');
 });
 }());
 
@@ -31,8 +37,14 @@ $(button).click(function(event){
 socket.on('login-success', function(){
     $("#login-box").toggle('slow');
     $("#signup-box").hide('slow');
+    $('#login').prop('text', "Log Out");
     socket.emit('myRows'); // Refresh "my rows"
     socket.emit('scan', 1);
+});
+socket.on('logout', function(){
+    $("#login-box").toggle('slow');
+    $("#signup-box").hide('slow');
+    $('#login').prop("text", "Log In");
 });
 
 /*

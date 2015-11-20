@@ -101,11 +101,12 @@ io.on('connection', function(socket){
                 access = Date.now(), username = rows[0].username;
                 console.log(username, " has successfully logged in at ", new Date(access));
             }
+            socket.emit('login-success');
         });
     }
     // Checks to see if the user is already logged in
     function authenticated () {
-        if (username && access - Date.now() < 60 * 60 * 1000) {
+        if (username && username != '' && access - Date.now() < 60 * 60 * 1000) {
             access = Date.now();
             return true;
         } else return false;
@@ -116,9 +117,10 @@ io.on('connection', function(socket){
         // Perform the query
         pool.query(sql, function(err, rows, fields){ if (err) throw err; });
     }
-    socket.on('login', function(unpw){
-        authenticate(unpw);
-        if (authenticated) socket.emit('login-success');
+    socket.on('login', function(unpw){ authenticate(unpw); });
+    socket.on('logout', function(){ 
+        username = null, access = null;
+        socket.emit('logout');
     });
     socket.on('scan', function(row) {
         if (!authenticated()) return;
@@ -183,7 +185,6 @@ io.on('connection', function(socket){
     0 - money, 1 - fuel, 2 - hosp. level, 3 - attack. level, 4 - def. level
     */
     socket.on('purchase-item', function(info) {
-        console.log(info);
         if (!authenticated()) return;
         scan(Number(info.row));
         var sql = "SELECT id FROM gamerows WHERE ownerusername = ? AND id = ?", inserts = [username, info.row];
