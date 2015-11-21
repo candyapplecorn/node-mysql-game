@@ -7,7 +7,7 @@ var socket = io();
 /*
 For debugging purposes, set username and password to Alex's
 */
-if (false){
+if (true){
     $("#login-box div form li:nth-child(1) input").val('alex');
     $("#login-box div form li:nth-child(2) input").val('password');
 }
@@ -101,8 +101,11 @@ socket.on('myRows-success', function(trth) {
     var rows = $('table.outward tbody tr'),
         buttons = $('table.outward tbody tr button');
 
-    for (var begin = 0, end = buttons.length; begin < end; begin += 1) {
-        var rownum = (Math.floor(begin / 5) * 3) || 1;
+    for (var begin = 0, end = buttons.length, rowID = -1; begin < end; begin += 1) {
+        //var rownum = (Math.floor(begin / 5) * 3) || 1;
+        if (begin % 5 == 0)
+            rowID += 2;
+        var rownum = rowID;
         $(buttons[begin]).prop('item', begin % 5);
         $(buttons[begin]).prop('row', $('table.outward > tbody:nth-child(2) > tr:nth-child(' + rownum  + ') > td:nth-child(1)').html());
         $(buttons[begin]).click(function(event){
