@@ -46,11 +46,26 @@ lastattacked DATETIME,
 lastaccessed DATETIME
 );
 
+--adding secret_string
+ALTER TABLE players
+ADD secret_string varchar(255);
+
 -- ============================================================
 --     PROCEDURES 
 -- ============================================================
 -- This is my first time making an actual function in pure sql! WOO HOO!
 delimiter //
+
+--stuffs a random number into secret_string
+CREATE PROCEDURE random_secret (player_id int)
+BEGIN
+	UPDATE players
+    SET lastlogin=NOW(), secret_string=rand()
+    WHERE id=player_id;
+    
+END
+//
+
 
 CREATE PROCEDURE fillgamerows(numrows INT)
 BEGIN
