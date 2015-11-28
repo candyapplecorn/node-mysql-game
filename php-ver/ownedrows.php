@@ -1,3 +1,13 @@
+/*
+Copyright 2015 Joseph Burger, Alexander McNulty and Nicholas Tarn, all rights reserved.
+To use under MIT license, all copyrights must be perserved.
+Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
+*/
+/*
+Copyright 2015 Joseph Burger, Alexander McNulty and Nicholas Tarn, all rights reserved.
+To use under MIT license, all copyrights must be perserved.
+Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
+*/
 <?PHP
 include "scripts/headers.php";
 

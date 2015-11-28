@@ -1,4 +1,9 @@
 /*
+Copyright 2015 Joseph Burger, Alexander McNulty and Nicholas Tarn, all rights reserved.
+To use under MIT license, all copyrights must be perserved.
+Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
+*/
+/*
 Client side scripts
 */
 // Will use socket.io to communicate with server rather than ajax or post/get
