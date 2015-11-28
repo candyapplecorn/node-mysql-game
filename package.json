@@ -16,7 +16,14 @@
     "mysql",
     "html"
   ],
-  "author": "Joseph Burger, Nick, and Alex",
+  "author": "Joseph Burger <candyapplecorn@gmail.com>",
+  "contributors": [{
+    "name": "Alex",
+    "email": ""
+  }, {
+    "name": "Nick",
+    "email": ""
+  }]
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/candyapplecorn/php-mysql-game/issues"
