@@ -46,26 +46,11 @@ lastattacked DATETIME,
 lastaccessed DATETIME
 );
 
---adding secret_string
-ALTER TABLE players
-ADD secret_string varchar(255);
-
 -- ============================================================
 --     PROCEDURES 
 -- ============================================================
 -- This is my first time making an actual function in pure sql! WOO HOO!
 delimiter //
-
---stuffs a random number into secret_string
-CREATE PROCEDURE random_secret (player_id int)
-BEGIN
-	UPDATE players
-    SET lastlogin=NOW(), secret_string=rand()
-    WHERE id=player_id;
-    
-END
-//
-
 
 CREATE PROCEDURE fillgamerows(numrows INT)
 BEGIN
@@ -240,10 +225,15 @@ Will use select count(owner) from gamerows where owner = source_row.owner
 CREATE PROCEDURE found_new_row (source_row INT, new_row INT)
 BEGIN
     DECLARE cash, numrows, cost, userid INT;
-    SELECT POW(COUNT(owner), COUNT(owner)), owner, money
+    SELECT owner, money
     FROM gamerows as a
     WHERE owner = (SELECT owner FROM gamerows WHERE id = source_row)
-    INTO cost, userid, cash;
+    INTO userid, cash;
+
+    SELECT POW(COUNT(owner), COUNT(owner))
+    FROM gamerows
+    WHERE owner = (SELECT owner FROM gamerows WHERE id = source_row)
+    INTO cost;
 
     IF cash >= cost AND (SELECT morale FROM gamerows WHERE id = new_row) < 1 THEN
 	    UPDATE gamerows
@@ -344,7 +334,7 @@ this_proc: BEGIN
     CALL scan(source_row, 0);
     CALL scan(destination_row, 0);
 
-IF fuel_cost > attacker_fuel OR attackers_sent > attacker_home_forces OR attacking_player < 1 THEN
+IF attackers_sent <= 0 OR fuel_cost > attacker_fuel OR attackers_sent > attacker_home_forces OR attacking_player < 1 THEN
     LEAVE this_proc;
 END IF;
 

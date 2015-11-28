@@ -1,0 +1,11 @@
+# Ignore all .ini files since they contain credentials #
+########################################################
+*.ini
+# Ignore the credentials file #
+credentials*
+
+# Ignore node_modules - They can be downloaded via `npm install` #
+node_modules
+
+# ignore ds.store
+.DS_Store

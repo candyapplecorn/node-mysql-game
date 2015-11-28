@@ -40,7 +40,6 @@ app.use('*', function(req, res, next) {
 Another piece of middleware - More can be listed
 */
 app.use(function(req, res, next){ 
-    //console.log(req.originalUrl); 
     next(); 
 });
 
@@ -203,10 +202,70 @@ io.on('connection', function(socket){
             });
         });
     });
+    /*
+    Transport
+    */
+    socket.on('transport', function(info) {
+        if (!authenticated()) return;
+        scan(Number(info.source));
+        scan(Number(info.target));
+        // Find out if the logged in player owns the source row
+        var sql = "SELECT id FROM gamerows WHERE ownerusername = ? AND id = ?", inserts = [username, info.source];
+        sql = mysql.format(sql, inserts);
+        pool.query(sql, function(err, rows, fields) {
+            if (err) throw err; 
+            if (!rows) {
+                console.log("Player tried to attack with a row they don't own");
+                return;
+            }
+            // Perform the attack
+            sql = "call attack(?, ?, ?)", inserts = [info.source, info.target, info.attackers];
+            sql = mysql.format(sql, inserts);
+            pool.query(sql, function(err, rows, fields) {
+                if (err) throw err; 
+                if (!rows) {
+                    console.log("No rows");
+                    return;
+                }
+            });
+            socket.emit('myRows-success');
+        });
+        console.log('recieved transport request');
+    });
+    /*
+    Attack - Takes a source row, a destination row, and number of troops
+    */
+    socket.on('attack', function(info) {
+        if (!authenticated()) return;
+        scan(Number(info.source));
+        scan(Number(info.target));
+        // Find out if the logged in player owns the source row
+        var sql = "SELECT id FROM gamerows WHERE ownerusername = ? AND id = ?", inserts = [username, info.source];
+        sql = mysql.format(sql, inserts);
+        pool.query(sql, function(err, rows, fields) {
+            if (err) throw err; 
+            if (!rows) {
+                console.log("Player tried to attack with a row they don't own");
+                return;
+            }
+            // Perform the attack
+            sql = "call attack(?, ?, ?)", inserts = [info.source, info.target, info.attackers];
+            sql = mysql.format(sql, inserts);
+            pool.query(sql, function(err, rows, fields) {
+                if (err) throw err; 
+                if (!rows) {
+                    console.log("No rows");
+                    return;
+                }
+            });
+            socket.emit('myRows-success');
+            console.log(username + 'attacked row ' + info.target + ' from row ' + info.source + ' at ' + new Date());
+        });
+    });
     console.log('a user connected');
 });
 /*
  * Run the app
  */
-http.listen(8081);
-console.log("listening on port 8081");
+http.listen(3000);
+console.log("listening on port 3000");
