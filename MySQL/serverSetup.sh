@@ -1,5 +1,5 @@
 #!/bin/bash
-# This is a setup script by Joseph Burger
+# This is a setup script by Joseph Burger <candyapplecorn@gmail.com>
 # It gets the credentials to log into a mysql database,
 # and then runs a bunch of commands in a sql file.
 # To run this script/program: ($ means you enter the command
