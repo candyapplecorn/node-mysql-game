@@ -3,6 +3,7 @@ Copyright 2015 Joseph Burger <candyapplecorn@gmail.com>, Alexander McNulty and N
 To use under MIT license, all copyrights must be perserved.
 Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
 */
+
 /*
 Client side scripts
 */
@@ -114,6 +115,7 @@ $(button).click(function(event){
         });
         // Scan the range containing the target row, to show the results.
         socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1);
+        socket.emit('myRows'); // Refresh "my rows"
         cleanInputs();
     }
 /*$(arr).each(function(index, value){
@@ -182,4 +184,13 @@ socket.on('myRows-success', function(trth) {
             socket.emit('purchase-item', {row: this.row, item: this.item});
         });
     }
+    $(function(){
+        window.setInterval(function(){
+            if (document.hasFocus()) {
+                console.log('dude');
+            } else {
+                console.log('no focus');
+            }
+        }, 10);
+    });
 });

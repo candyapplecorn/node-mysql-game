@@ -224,7 +224,7 @@ io.on('connection', function(socket){
                 return;
             }
             // Perform the attack
-            sql = "call attack(?, ?, ?)", inserts = [info.source, info.target, info.attackers];
+            sql = "call send_resources(?, ?, ?, ?)", inserts = [info.source, info.target, info.money, info.fuel];
             sql = mysql.format(sql, inserts);
             pool.query(sql, function(err, rows, fields) {
                 if (err) throw err; 
@@ -232,9 +232,16 @@ io.on('connection', function(socket){
                     console.log("No rows");
                     return;
                 }
+                console.log(username + " is transferring resources: " + info);
             });
             socket.emit('myRows-success');
         });
+        if (info.attackers > 0)
+            pool.query(mysql.format("CALL attack(?, ?)", [info.source, info.target]), function(err, rows, fields) {
+                if (err) throw err;
+                socket.emit('myRows-success');
+            });
+        // Add in a check and query for attackers being sent as well
         console.log('recieved transport request');
     });
     /*
