@@ -1,8 +1,3 @@
---
--- Copyright 2015 Joseph Burger <candyapplecorn@gmail.com>, Alexander McNulty and Nicholas Tarn, all rights reserved.
--- To use under MIT license, all copyrights must be perserved.
--- Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
---
 -- ============================================================
 --      SCHEMA CREATION 
 -- ============================================================
@@ -228,25 +223,29 @@ We need a procedure to allow a player to start a new row
 Will use select count(owner) from gamerows where owner = source_row.owner
 */
 CREATE PROCEDURE found_new_row (source_row INT, new_row INT)
-BEGIN
+this_proc: BEGIN
     DECLARE cash, numrows, cost, userid INT;
     SELECT owner, money
     FROM gamerows as a
-    WHERE owner = (SELECT owner FROM gamerows WHERE id = source_row)
+    WHERE id = source_row
     INTO userid, cash;
+
+    IF userid = 0 THEN
+        LEAVE this_proc;
+    END IF;
 
     SELECT POW(COUNT(owner), COUNT(owner))
     FROM gamerows
-    WHERE owner = (SELECT owner FROM gamerows WHERE id = source_row)
+    WHERE owner = (SELECT owner FROM gamerows WHERE id = source_row LIMIT 1)
     INTO cost;
-
-    IF cash >= cost AND (SELECT morale FROM gamerows WHERE id = new_row) < 1 THEN
+    
+    IF cash >= cost AND (SELECT morale FROM gamerows WHERE id = new_row LIMIT 1) < 1 THEN
 	    UPDATE gamerows
 	    SET money = money - cost
         WHERE id = source_row;
 	    CALL grantrow(new_row, userid);  
     END IF;
-END
+END this_proc
 //
 
 /*

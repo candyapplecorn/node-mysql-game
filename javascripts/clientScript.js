@@ -89,6 +89,30 @@ socket.on('scan', function(trth) {
 });
 
 /*
+Buy row listener
+*/
+(function(){
+var source = $('#buy-row-form .buttonField div:nth-child(1) input'),
+    target = $('#buy-row-form .buttonField div:nth-child(2) input'),
+    button = $('#buy-row-form button');
+
+$(button).click(function(event){ 
+    event.preventDefault();
+        if ($.isNumeric($(target).val()) && $.isNumeric($(source).val()))
+        socket.emit('found_new_row', {
+            target: target.val(),
+            source: source.val()
+        });
+        // Scan the range containing the target row, to show the results.
+        window.setTimeout(function(){ 
+            socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1);
+            cleanInputs();
+        }, 1000);
+        socket.emit('myRows'); // Refresh "my rows"
+    });
+}());
+
+/*
 Transport Event Listener
 */
 (function(){
@@ -114,9 +138,11 @@ $(button).click(function(event){
             attackers: attackers.val()
         });
         // Scan the range containing the target row, to show the results.
-        window.setTimeout(function(){ socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1); }, 1000);
+        window.setTimeout(function(){ 
+            socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1);
+            cleanInputs();
+        }, 1000);
         socket.emit('myRows'); // Refresh "my rows"
-        cleanInputs();
     }
 /*$(arr).each(function(index, value){
         $(value).val('');
@@ -141,12 +167,11 @@ $(button).click(function(event){
             attackers: $(attackers).val() 
         });
         // Scan the range containing the target row, to show the results.
-        window.setTimeout(function(){ socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1);}, 1000);
+        window.setTimeout(function(){ 
+            socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1);
+            cleanInputs();
+        }, 1000);
     }
-    cleanInputs();
-    /*$(source).val('');
-    $(target).val('');
-    $(attackers).val('');*/
 });
 }());
 /*

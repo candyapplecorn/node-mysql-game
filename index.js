@@ -208,7 +208,37 @@ io.on('connection', function(socket){
         });
     });
     /*
-    Transport
+    found_new_row
+    */
+    socket.on('found_new_row', function(info) {
+        if (!authenticated()) return;
+        if (info.target == '' || info.target <= 0 || info.source == '' || info.source <= 0) return;
+        info.source = Number(info.source), info.target = Number(info.target);
+        scan(Number(info.target));
+        scan(Number(info.source));
+
+        pool.query(mysql.format("SELECT id FROM gamerows WHERE ownerusername = ? AND id = ?", [username, info.source]), function(err, rows, fields){
+            if (err) {
+                console.log(err);
+                throw err;
+            }
+            if (!rows || !rows.length) {
+                console.log(username + " doesn't own row " + info.source);
+                return;
+            }
+            pool.query(mysql.format("CALL found_new_row(?, ?)", [info.source, info.target]), function(err, rows, fields) {
+                if (err) {
+                    console.log(err);
+                    //throw err;
+                }
+                socket.emit('myRows-success');
+                console.log(username + ' tried to purchase a row!');
+            });
+        });
+    });
+
+    /*
+       Transport
     */
     socket.on('transport', function(info) {
         if (!authenticated()) return;
