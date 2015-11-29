@@ -64,7 +64,6 @@ Attach an event listener to the register button.
     confirm_password = $("#signup-box  li:nth-child(4) input"),
     button = $('#signup-box button');
     var arr = [email, username, password, confirm_password], invalid = false;
-    console.log(arr);
 
 $(button).click(function(event){ 
     event.preventDefault();
