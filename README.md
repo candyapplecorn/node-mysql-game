@@ -17,5 +17,4 @@ b.) The database - MySQL. More than just tables, there are over 400 lines of sto
 
 c.) The hardware - The app is planned to be deployed on a linux cloud server. The shell scripts (files ending in .sh) are run on the server's command line.
 
-The game can be played here: joeburger.ax.lt:3000
 Please contact me if you find any bugs, security issues or have a suggestion!
