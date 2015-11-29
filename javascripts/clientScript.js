@@ -114,7 +114,7 @@ $(button).click(function(event){
             attackers: attackers.val()
         });
         // Scan the range containing the target row, to show the results.
-        socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1);
+        window.setTimeout(function(){ socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1); }, 1000);
         socket.emit('myRows'); // Refresh "my rows"
         cleanInputs();
     }
@@ -141,7 +141,7 @@ $(button).click(function(event){
             attackers: $(attackers).val() 
         });
         // Scan the range containing the target row, to show the results.
-        socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1);
+        window.setTimeout(function(){ socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1);}, 1000);
     }
     cleanInputs();
     /*$(source).val('');
@@ -184,13 +184,4 @@ socket.on('myRows-success', function(trth) {
             socket.emit('purchase-item', {row: this.row, item: this.item});
         });
     }
-    $(function(){
-        window.setInterval(function(){
-            if (document.hasFocus()) {
-                console.log('dude');
-            } else {
-                console.log('no focus');
-            }
-        }, 10);
-    });
 });

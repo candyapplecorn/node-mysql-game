@@ -217,6 +217,7 @@ io.on('connection', function(socket){
         // Find out if the logged in player owns the source row
         var sql = "SELECT id FROM gamerows WHERE ownerusername = ? AND id = ?", inserts = [username, info.source];
         sql = mysql.format(sql, inserts);
+        if (info.money != '' && info.money > 0 || info.fuel != '' && info.fuel > 0)
         pool.query(sql, function(err, rows, fields) {
             if (err) throw err; 
             if (!rows) {
@@ -224,7 +225,7 @@ io.on('connection', function(socket){
                 return;
             }
             // Perform the attack
-            sql = "call send_resources(?, ?, ?, ?)", inserts = [info.source, info.target, info.money, info.fuel];
+            sql = "call send_resources(?, ?, ?, ?)", inserts = [info.source, info.target, info.money == '' ? 0 : info.money, info.fuel == '' ? 0 : info.fuel];
             sql = mysql.format(sql, inserts);
             pool.query(sql, function(err, rows, fields) {
                 if (err) throw err; 
@@ -237,7 +238,7 @@ io.on('connection', function(socket){
             socket.emit('myRows-success');
         });
         if (info.attackers > 0)
-            pool.query(mysql.format("CALL attack(?, ?)", [info.source, info.target]), function(err, rows, fields) {
+            pool.query(mysql.format("CALL attack(?, ?, ?)", [info.source, info.target, info.attackers]), function(err, rows, fields) {
                 if (err) throw err;
                 socket.emit('myRows-success');
             });

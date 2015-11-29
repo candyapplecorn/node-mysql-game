@@ -23,7 +23,7 @@
   }, {
     "name": "Nick",
     "email": ""
-  }]
+  }],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/candyapplecorn/php-mysql-game/issues"
