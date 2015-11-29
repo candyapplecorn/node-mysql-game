@@ -150,6 +150,61 @@ io.on('connection', function(socket){
             socket.emit('scan', [TableHeaders, TableRows ] );
         });
     });
+    /*
+     User Registration - A tedious process
+     */
+    socket.on('register', function(userinfo) {
+        // Test information - all fields must be 30 characters or shorter
+        // Using the ? to place variables into SQL queries automatically
+        // escapes the data
+        for (var key in userinfo) 
+            if (userinfo[key].length > 30 || userinfo[key].length == 0)
+                return;
+        // This regular expression can check for a valid email format
+        var email_pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/i
+        var valid_email = email_pattern.test(userinfo.email);
+        // Test for a valid email
+        if (!valid_email) return;
+
+        // Username and PW are non-zero length strings and are under 31 characters long.
+        // The email is valid, syntactically speaking.
+        // The next step would be to check if the username is already in use
+        pool.query(mysql.format("SELECT id FROM players WHERE username = ? LIMIT 1", [userinfo.username]),
+            function(err, rows, fields){
+                if (err) throw err;
+                // If the username isn't taken, check if the email is.
+                if (!rows || !rows.length)
+            pool.query(mysql.format("SELECT id FROM players WHERE email = ? LIMIT 1", [userinfo.email]),
+                function(err, rows, fields){
+                    if (err) throw err;
+                    if (rows.length) return;
+                    // If the program has made it this far then the username
+                    // and email are unique.
+                    // Normally a verification email would be sent out, but since this
+                    // is a hobbyist project for a club and I'm pinched for time, 
+                    // the program will just liberally allow any unique username +
+                    // email combination to register. If I were to implement this I
+                    // might use a node module for mailing, or make a system call to
+                    // a linux script that sends mail.
+                    pool.query(
+                        mysql.format("CALL add_user(?, ?, ?)", [
+                            userinfo.username,
+                            userinfo.password,
+                            userinfo.email
+                            ]
+                            ), 
+                        function(err, rows, fields){
+                            if (err) throw err;
+                            console.log("Successfully registered " + userinfo.username + " at " + new Date());
+                            socket.emit('auto-login', {
+                                username: userinfo.username, 
+                                password: userinfo.password
+                            });
+                        });
+                });
+            });
+    });
+
     socket.on('myRows', function() {
         var TableHeaders = '<TR>', TableRows = [];
         if (!authenticated()) return;
@@ -190,6 +245,8 @@ io.on('connection', function(socket){
     */
     socket.on('purchase-item', function(info) {
         if (!authenticated()) return;
+        //info.row = Number(info.row), info.item = Number(info.item);
+        //if (!info.row || !info.item) return;
         scan(Number(info.row));
         var sql = "SELECT id FROM gamerows WHERE ownerusername = ? AND id = ?", inserts = [username, info.row];
         sql = mysql.format(sql, inserts);

@@ -21,6 +21,12 @@ For debugging purposes, set username and password to Alex's
 if (true){
     $("#login-box div form li:nth-child(1) input").val('joe');
     $("#login-box div form li:nth-child(2) input").val('betterpassword');
+    
+    // email, username, password, confirm-password
+    $("#signup-box  li:nth-child(1) input").val('zap@gmail.com');
+    $("#signup-box  li:nth-child(2) input").val('zap');
+    $("#signup-box  li:nth-child(3) input").val('zap');
+    $("#signup-box  li:nth-child(4) input").val('zap');
 }
 /*
 Attach an event listener to the login button. When clicked, it will
@@ -46,6 +52,47 @@ $('#login').click(function(event){
         socket.emit('logout');
 });
 }());
+
+/*
+Attach an event listener to the register button.
+*/
+(function(){
+    // email, username, password, confirm-password
+    var email = $("#signup-box  li:nth-child(1) input"),
+    username = $("#signup-box  li:nth-child(2) input"),
+    password= $("#signup-box  li:nth-child(3) input"),
+    confirm_password = $("#signup-box  li:nth-child(4) input"),
+    button = $('#signup-box button');
+    var arr = [email, username, password, confirm_password], invalid = false;
+    console.log(arr);
+
+$(button).click(function(event){ 
+    event.preventDefault();
+    
+    for (var key in arr)
+        if ($(arr[key]).val() == '')
+            invalid = true;
+    if ($(password).val() != $(confirm_password).val())
+        invalid = true;
+    
+    if (invalid) {
+        alert("Invalid input");
+    }
+    else {
+        socket.emit('register', {
+            email: email.val(),
+            username: username.val(),
+            password: password.val()
+        });
+    }
+    cleanInputs();
+});
+}());
+
+// If a user registers, then automatically log them in
+socket.on('auto-login', function(userinfo){
+    socket.emit('login', [userinfo.password, userinfo.username]);
+});
 
 // Hide the loginbox if a successful login
 socket.on('login-success', function(){
@@ -169,7 +216,6 @@ $(button).click(function(event){
         // Scan the range containing the target row, to show the results.
         window.setTimeout(function(){ 
             socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1);
-            cleanInputs();
         }, 1000);
     }
 });
@@ -201,7 +247,18 @@ socket.on('myRows-success', function(trth) {
         buttons = $('table.outward tbody tr button');
 
     for (var begin = 0, end = buttons.length; begin < end; begin += 1) {
-        var rownum = (Math.floor(begin / 5) * 3) || 1;
+        // Okay seriously this one line right here, this one line right here
+        // See this line, take a good look at it
+        // Make sure you're glaring and making a really mean face
+        // I mean this one line right here, he deserves it
+        // He's one bad line. real real bad. Taking all my time
+        // On multiple days this line has been the cause of crashes and errors
+        // this line right here
+        // go ahead, glare at 'im
+        // he's a jerk
+        var rownum = 1 + Math.floor(begin / 5) * 2
+        // really though it's my fault for being bad at math
+
         $(buttons[begin]).prop('item', begin % 5);
         $(buttons[begin]).prop('row', $('table.outward > tbody:nth-child(2) > tr:nth-child(' + rownum  + ') > td:nth-child(1)').html());
         $(buttons[begin]).click(function(event){
