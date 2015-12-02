@@ -14,7 +14,7 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
   <link rel="stylesheet" type="text/css" href="pub/css/normalize.css">
   <link rel="stylesheet" type="text/css" href="pub/css/style.css">
   <link rel="icon" href="pub/img/favicon.ico" type="image/x-icon">
-  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="pub/img/favicon.ico" type="image/x-icon">
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js" type="text/javascript"></script>
     <script src="javascripts/jquery/jquery.growl.js" type="text/javascript"></script>
@@ -23,26 +23,15 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
 
 <body>
 <!-- Header -->
-  <nav class="top-bar" data-topbar role="navigation">
-    <ul class="title-area">
-      <li class="name">
-        <h1><a href="#"><img src="pub/img/MultiDoge.png">&nbsp;SQL Chief</a></h1>
-      </li>
-      <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
-    </ul>
-    <section class="top-bar-section">
-      <ul class="right">
-        <li class=""><a id="login" href="#">Log In</a></li>
-        <li class=""><a id="signup" href="#">Sign Up</a></li>
-      </ul>
-      <ul class="left">
-        <li><a href="#" class="donate">Donate!</a></li>
-      </ul>
-    </section>
+  <nav class="navbar">
+    <h1 class="left"><a href="#"><img src="pub/img/MultiDoge.png">&nbsp;SQL Chief</a></h1>
+    <a class="right" id="login" href="#">Log In</a>
+    <a  class="right" id="signup" href="#">Sign Up</a>
+    <a  class="left" href="#" class="donate">About Us</a>
   </nav>
   <nav id="login-box" class="top-bar secondary login" data-topbar="" role="navigation">
     <div class="row full">
-      <h2 class="header-pop-up">Login</h2>
+      <h3 class="header-pop-up">Login</h2>
       <form>
         <ul class="">
           <li class="small-6 medium-6 columns">
@@ -58,7 +47,7 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
   </nav>
   <nav id="signup-box" class="top-bar secondary sign-up" data-topbar="" role="navigation">
     <div class="row full">
-    <h2 class="header-pop-up">Sign Up</h2>
+    <h3 class="header-pop-up">Sign Up</h2>
       <form>
         <ul class="">
           <li class="small-6 medium-3 columns">
@@ -157,7 +146,7 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
       </div>
       <div class="sidebar small-12 medium-12 columns">
         <div class="row full buttons">
-          <div href="#" class="small-3 medium-2 columns button small  right" id = "buy-row-form">
+          <div href="#" class="small-2 medium-2 columns button small  right" id = "buy-row-form">
           <span class="buttonHeader">Buy Row</span><br/><br/>
             <div class="buttonField">
               <div class="right">
@@ -174,7 +163,24 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
             <span class="cost"> cost:XXX </span>
             <button class="button success small" > Buy </button>
           </div>
-          <div href="#" class="small-3 medium-3 columns button small  right" id = "transport-form">
+          <div href="#" class="small-2 medium-2 columns button small  right" id = "buy-row-form">
+          <span class="buttonHeader">Buy Attacker</span><br/><br/>
+            <div class="buttonField">
+              <div class="right">
+                <span> Source </span><input  name="#" value="XXX">
+              </div>
+              <div class="right">
+                <span> Number </span><input  name="#" value="XXX">
+              </div>
+            </div>
+            <!--<div class="buttonField">
+              <input name="#" value="XXX">
+            </div>
+            <br/>-->
+            <span class="cost"> cost:XXX </span>
+            <button class="button success small" > Buy </button>
+          </div>
+          <div href="#" class="small-2 medium-2 columns button small  right" id = "transport-form">
           <span class="buttonHeader">Transport</span><br/><br/>
             <div class="buttonField">
               <div class="right">
@@ -196,7 +202,7 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
             <span class="cost"> cost:XXX </span>&nbsp;&nbsp;
             <button class="button success small" > Move </button>
           </div>
-          <div href="#" class="small-3 medium-3 columns button small  right" id = "attack-form">
+          <div href="#" class="small-2 medium-2 columns button small  right" id = "attack-form">
           <span class="buttonHeader">Attack</span><br/><br/>
             <div class="buttonField">
               <div class="right">
@@ -212,7 +218,7 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
             <span class="cost"> cost:XXX </span>&nbsp;&nbsp;
             <button class="button success small" > Attack </button>
           </div>
-          <div href="#" class="small-3 medium-3 columns button small right">
+          <div href="#" class="small-2 medium-2 columns button small right">
          <span class="buttonHeader">Scan</span><br/><br/>
             <div class="buttonField">
               <input  name="#" value="xxx"><span> to XXX </span>
@@ -223,7 +229,6 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
         </div>
       </div>
     </div>
-    <br/>
     <h3 class="sectionHeader">&nbsp;&nbsp;&nbsp;Your Rows:</h3>
     <div class="row full">
       <div class="content left small-12 medium-12 columns">
@@ -251,7 +256,10 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
               <td class="numbers">XXX</td>
               <td class="numbers">XXX</td>
               <td class="numbers">XXX</td>
-              <td class="numbers">XXX</td>
+              <td class="numbers">
+                XXX
+                &nbsp;<button class="button small norm">+</button>
+              </td>
               <td class="numbers">XXX</td>
               <td class="numbers">XXX</td>
               <td class="numbers">XXX</td>
