@@ -30,7 +30,9 @@ ul li a.donate{
 	padding: 10px;
 	font-weight: 100;
 }
-
+.navbar a.left{
+	color:#ddd;
+}
 
 nav.top-bar.sign-up{
 	background-color: #292929;
