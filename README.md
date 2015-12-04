@@ -5,6 +5,8 @@ Contact at 'candyapplecorn@gmail.com' if you would like to use this.
 
 node-mysql-game is a basic CRUD application utilizing an HTML front end, Javascript back end and SQL database, intended to be deployed on a linux server. 
 
+Demo Video: https://youtu.be/WfJ6ikPaAZs
+
 Users will be able to register, log in and out, and perform operations to play the game. 
 
 The front end, or user interface, is an html page that sends and recieves data using ajax. It makes use of a stylish front end framework called "foundation".
