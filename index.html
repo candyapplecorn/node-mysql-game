@@ -24,11 +24,11 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
 <body>
 <!-- Header -->
   <nav class="navbar">
-    <h1 class="left"><a href="#"><img src="pub/img/MultiDoge.png">&nbsp;SQL Chief</a></h1>
+    <h1 class="left" id="sqlButton" ><a href="#"  id="sqlButton"><img src="pub/img/MultiDoge.png">&nbsp;SQL Chief</a></h1>
     <a class="right" id="login" href="#">Log In</a>
-    <a  class="right" id="signup" href="#">Sign Up</a>
-    <a  class="left" href="#" class="donate">&nbsp;&nbsp;&nbsp;About Us</a>
-    <a  class="left" href="#" class="donate">&nbsp;&nbsp;&nbsp;Instructions</a>
+    <a class="right" id="signup" href="#">Sign Up</a>
+    <a class="donate left" id="instructionsButton" href="#">&nbsp;&nbsp;&nbsp;Instructions</a>
+    <a class="donate left" id="aboutButton" href="#">&nbsp;&nbsp;&nbsp;About Us</a>
   </nav>
   <nav id="login-box" class="top-bar secondary login" data-topbar="" role="navigation">
     <div class="row full">
@@ -70,9 +70,9 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
   </nav>
 <!-- End Header -->
 <!-- Main -->
-  <div class="main">
-  <br/>
-  <h3 class="sectionHeader">&nbsp;&nbsp;&nbsp;Playing Field:</h3>
+  <div class="main" id="game main">
+    <br/>
+    <h3 class="sectionHeader">&nbsp;&nbsp;&nbsp;Playing Field:</h3>
     <div class="row full outward">
       <div class="content right small-12 medium-12 columns">
         <table id = 'map'>
@@ -229,7 +229,7 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
           </div>
       </div>
   </div>
-    </div>
+  </div>
     <h3 class="sectionHeader">&nbsp;&nbsp;&nbsp;Your Rows:</h3>
     <div class="row full">
       <div class="content left small-12 medium-12 columns">
@@ -382,6 +382,38 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
     </div>
     <br/>
     <br/>
+  </div>
+<!-- About -->
+  <div class="about pan" id="about">
+    <h1>About Us</h1>
+    <mom>Nick:</mom>
+    I was working on a subset of MySQL procedures and PHP along the way. It really put the SQL class I was taking into a practical setting, and I got to understand the PDO custom queries, session objects. I also got to watch Alex make the front end visually appealing with the libraries he was using, and Joe code everything with vim from his linux shell. It was fun.
+    
+    <mom>Alexander McNulty:</mom>
+    <span class="wizard">Not much is know about this CSS wizard.</span>
+
+    <mom>Joe:</mom>
+    As my first free-lance gig I pitched a website idea to the owners of the company I work for. I knew it was beyond my experience so I undertook this project to prepare. I had experience in all required domains - html, client/server communication, ajax, connecting a program to a database and hosting an application on a server - however I'd yet to combine it all into a complete program. I was feeling adventurous and decided to write the game's logic in MySQL stored procedures. Towards the end of the project everything stopped working, and since I was taking a JavaScript class and sick of debugging PHP, I switched the server-side code to JavaScript. The switch only took a day (until 7 AM) thanks to the game logic already existing in the database - all I had to do was rewrite my procedure calls in Javascript. 
+    Prior to this project I always wondered why companies keep programmers employed after their main product is released; now I know. There's a deceptively large amount of work to do behind even a simple program like this one. As soon as I finished one feature, ideas for many more would appear. I had loftier plans for this project before Alex, with his experience and practical thinking, encouraged me to think in terms of a minimum viable product. One quarter later and we barely made it to the MVP! Next time around I'd like to enable https, configure nginx to properly port forward for enhanced security, get email verification working for user registration, enable password recovery and many more features. 
+    I learned an incredible amount from this project and am thankful for my group members Alex and Nick, as well as the advice I recieved from the Developer's Guild officers Anthony, Chris and Paul, and finally the Developer's Guild club for giving me the opportunity to propose, lead, and see this project to fruition.
+
+  </div>
+  <!-- Instructions -->
+  <div class="instructions pan" id="instructions">
+    <h1>Instructions</h1>
+    <ol>
+      <li>The game is simple: be top-doge.</li>
+      <li>Buy attackers and attack other rows; when a row's morale hits 0 it's destroyed.</li>
+      <li>Attackers cost money; more money generators accrue money faster, and likewise for fuel and fuel generators.</li>
+
+      <li>The "source" input is either the row which is paying for a purchase, sending resources and troops, or making an attack.</li>
+      <li>The "target" input is either the row which to be purchased, accept a transfer, or be attacked.</li>
+
+      <li>An attack is strengthened by a row's attacker level.</li>
+      <li>A row's defense is strengthened by its defense level.</li>
+      <li>Attackers defend their row, so buy many!</li>
+      <li>Wounded attackers recover from the hospital at a rate which can be increased by increasing a row's hospital level.</li>
+    </ol>
   </div>
 <!-- Script Tags -->
   <script src="pub/js/foundation.min.js"></script>

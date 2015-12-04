@@ -2,12 +2,45 @@ body{
 	min-width: 870px;
 	width: 100%;
 	background-image: url(../img/stickwar.jpg);
-	letter-spacing: 1.1px
+	letter-spacing: 1.1px;
 }
 
+/* PARTIALS */
+.main{
+	display: none;
+}
+.instructions{
+	display: block;
+}
+.pan{
+	margin: 35px auto;
+	width: 80%;
+	background-color: #eee;
+	padding: 25px 25px 35px;
+}
+.about{
+	display: none;
+}
+mom{
+	font-weight: 500;
+	display: block;
+	size:1.2em;
+	padding: 15px 0px 3px;
+	letter-spacing: .15em;
+}
+.wizard{
+	color:#999;
+	margin-bottom:9px;
+}
+ol li{
+	padding: 6px;
+}
 /* HEADER */
 ul li a.donate{
 	color:#999;
+}
+th.numbers{
+	padding: 8px 8px 10px;
 }
 
 .navbar{
@@ -24,6 +57,8 @@ ul li a.donate{
 .navbar h1  a{
 	font-weight: 200;
 }
+
+
 .navbar a{
 	color: #f7f7f7;
 	vertical-align: bottom;
