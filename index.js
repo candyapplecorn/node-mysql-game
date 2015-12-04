@@ -34,7 +34,18 @@ This piece of middleware intercepts all requests and if they don't fall under
 a described subset of requests, the response becomes status 401 unauthorized
 */
 app.use('*', function(req, res, next) {
-    if (req.originalUrl == '/' || ['/pub', '/stylesheets', '/javascript'].filter(function(url){
+    if (req.originalUrl == '/cache.appcache') {
+        // Send the appcache with proper content header etc
+        fs.readFile('cache.appcache', function(err, content){
+            res.writeHead(200, {
+                'Content-Type': 'text/cache-manifest; charset = UTF-8',
+                'Cache-Control': 'no-cache'
+            });
+            res.write(content);
+            res.end();
+        });
+    }
+    else if (req.originalUrl == '/' || ['/pub', '/stylesheets', '/javascript'].filter(function(url){
         return req.originalUrl.search(url) == 0;
     }).length)
         next(); // Call the next router

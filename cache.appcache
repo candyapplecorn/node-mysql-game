@@ -1,0 +1,7 @@
+CACHE MANIFEST
+# ver 3
+index.html
+javascripts/clientScript.js
+javascripts/jquery/jquery.js
+javascripts/jquery/rainbow.js
+javascripts/jquery/sample.js
