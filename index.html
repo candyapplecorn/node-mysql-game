@@ -151,7 +151,7 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
           <span class="buttonHeader">Buy Row</span><br/><br/>
             <div class="buttonField">
               <div class="right">
-                <span> Source </span><input  name="#" value="XXX">
+                <span> Source </span><input  name="#" value="XXX" id = "buy-row-source">
               </div>
               <div class="right">
                 <span> Target </span><input  name="#" value="XXX">
@@ -161,24 +161,24 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
               <input name="#" value="XXX">
             </div>
             <br/>-->
-            <span class="cost"> cost:XXX </span>
+            <span class="cost"> cost: <span id="cost-span">XXX</span> </span>
             <button class="button success small" > Buy </button>
           </div>
           <div href="#" class="small-2 medium-2 columns button small  right" id = "buy-attacker-form">
           <span class="buttonHeader">Buy Attacker</span><br/><br/>
             <div class="buttonField">
               <div class="right">
-                <span> Source </span><input  name="#" value="XXX">
+                <span> Source </span><input  name="#" value="XXX" id="buy-attackers-source">
               </div>
               <div class="right">
-                <span> Number </span><input  name="#" value="XXX">
+                <span> Number </span><input  name="#" value="XXX" id="buy-attackers-amount" placeholder="">
               </div>
             </div>
             <!--<div class="buttonField">
               <input name="#" value="XXX">
             </div>
             <br/>-->
-            <span class="cost"> cost:XXX </span>
+            <span class="cost"> Max: <span id="max-attackers"></span></span>
             <button class="button success small" > Buy </button>
           </div>
           <div href="#" class="small-2 medium-2 columns button small  right" id = "transport-form">
@@ -233,7 +233,7 @@ Contact me at 'candyapplecorn@gmail.com' if you would like to use this,
     <h3 class="sectionHeader">&nbsp;&nbsp;&nbsp;Your Rows:</h3>
     <div class="row full">
       <div class="content left small-12 medium-12 columns">
-        <table class="outward">
+        <table class="outward" name="your-rows">
           <thead>
             <tr>
               <th width="10%">Row</th>
