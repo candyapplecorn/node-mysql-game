@@ -18,7 +18,7 @@ function cleanInputs(){
 /*
 For debugging purposes, set username and password to Alex's
 */
-if (true){
+if (false){
     $("#login-box div form li:nth-child(1) input").val('joe');
     $("#login-box div form li:nth-child(2) input").val('betterpassword');
     
