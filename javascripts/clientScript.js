@@ -139,7 +139,7 @@ Attach an event listener to the Scan button
 $(button).click(function(event){ 
     event.preventDefault();
     if ($.isNumeric($(input).val())) {
-        socket.emit('scan', Math.floor($(input).val() / 10) * 10);
+        socket.emit('scan', Math.floor($(input).val() / 10) * 10 + 1);
     }
     cleanInputs();
 });
@@ -282,3 +282,47 @@ socket.on('myRows-success', function(trth) {
         });
     }
 });
+
+/*
+ * Show max attackers purchasable - buggy, doesn't
+ * properly respond to the keydown event. When the
+ * user hits enter or tab, function will run.
+ */
+(function(){
+    var input = $("#buy-attackers-source"), amount = $('#buy-attackers-amount')
+        maxA = $("#max-attackers");
+    function displayMax (event) {
+        if ( event.which == 13 ) {
+            event.preventDefault();
+        }
+        var row = $(input).val(), i = 1;
+        if ( !$.isNumeric(row) ) return;
+        while (i) {
+            var d = $("table.outward tbody:nth-child(2) tr:nth-child(" + i + ") td:nth-child(1)").html();
+            if (Number(d) == Number(row))
+                break;
+            if (d) i += 2;
+            else return;
+        }
+        var money = Number($("table.outward tbody:nth-child(2) tr:nth-child(" + i + ") td:nth-child(5)").html());
+        $(maxA).html(Math.floor(money / 100));
+        $(amount).attr("placeholder", $(maxA).html()).val($(maxA).html());
+    }
+    // Unfortunately doesn't work like the jQuery documentation
+    // says it should, so I added multiple listeners
+    $(input)
+    .change(function(event){ displayMax(event); })
+    .keydown(function(event){ displayMax(event); })
+    .focus(function(event){ displayMax(event); })
+}());
+/*
+Show cost of next row
+*/
+(function(){
+    var span = $('#cost-span'), input = $('#buy-row-source');
+    function calcNewRowCost (event) {
+        var rows = $("table.outward tbody:nth-child(2) tr").length / 2;
+        $(span).html(Math.pow(rows, rows));
+    }
+    $(input).on('focus', function(event){ calcNewRowCost(event); });
+}());
