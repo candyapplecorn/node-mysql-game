@@ -326,3 +326,8 @@ Show cost of next row
     }
     $(input).on('focus', function(event){ calcNewRowCost(event); });
 }());
+// Toggle the game
+(function(){ 
+    $('.main').toggle();
+    $('#instructions').toggle();
+}());
