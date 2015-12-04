@@ -295,6 +295,32 @@ io.on('connection', function(socket){
     });
 
     /*
+    Buy attackers, rewritten buy row code
+    */
+    socket.on('buy-attacker', function(info) {
+    if (!authenticated() || Object.keys(info).length != 2) return;
+    info.source = Number(info.source), info.attackers = Number(info.attackers);
+    scan(info.source);
+    scan(info.attackers);
+    // Find out if the logged in player owns the source row
+    var sql = "SELECT id FROM gamerows WHERE ownerusername = ? AND id = ?", inserts = [username, info.source];
+    pool.query(mysql.format(sql, inserts), function(err, rows, fields) {
+        if (err) throw err; 
+        if (!rows) {
+            console.log("Player tried to buy with a row they don't own");
+            return;
+        }
+        // Perform the purchase
+        pool.query(mysql.format(
+                "CALL purchase_attackers(?, ?)",
+                [info.source, info.attackers]
+                ), function(err, rows, fields) {
+                    if (err) throw err;
+                    socket.emit('myRows-success');
+                });
+    });
+    });
+    /*
        Transport
     */
     socket.on('transport', function(info) {

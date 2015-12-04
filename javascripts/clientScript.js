@@ -108,19 +108,40 @@ socket.on('logout', function(){
 });
 
 /*
+Attach a listener to the buy attackers form
+*/
+(function(){
+    var source = $('#buy-attacker-form div:nth-child(1) input'),
+    target = $('#buy-attacker-form div:nth-child(2) input'),
+    button = $("#buy-attacker-form button");
+
+$(button).click(function(event){ 
+    event.preventDefault();
+    if ($.isNumeric($(target).val()) && $.isNumeric($(source).val()))
+        socket.emit('buy-attacker', {
+            source: source.val(), 
+            attackers: target.val()
+        });
+    cleanInputs();
+    window.setTimeout(function(){
+        socket.emit('scan', $("#map td:nth-child(1)").html());
+        socket.emit('myRows'); // Refresh "my rows"
+    }, 1000);
+});
+}());
+/*
 Attach an event listener to the Scan button
 */
 (function(){
-    var input = $("div.small-3:nth-child(4) > div:nth-child(4) > input:nth-child(1)"),
-    button = $("div.small-3:nth-child(4) > button:nth-child(6)");
+    var input = $('#scan-form input'),
+    button = $("#scan-form button");
 
 $(button).click(function(event){ 
     event.preventDefault();
     if ($.isNumeric($(input).val())) {
-        socket.emit('scan', $(input).val());
+        socket.emit('scan', Math.floor($(input).val() / 10) * 10);
     }
     cleanInputs();
-    //$(input).val('');
 });
 }());
 
@@ -138,9 +159,9 @@ socket.on('scan', function(trth) {
 Buy row listener
 */
 (function(){
-var source = $('#buy-row-form .buttonField div:nth-child(1) input'),
-    target = $('#buy-row-form .buttonField div:nth-child(2) input'),
-    button = $('#buy-row-form button');
+    var source = $('#buy-row-form div:nth-child(1) input'),
+    target = $('#buy-row-form div:nth-child(2) input'),
+    button = $("#buy-row-form button");
 
 $(button).click(function(event){ 
     event.preventDefault();
@@ -154,6 +175,7 @@ $(button).click(function(event){
             socket.emit('scan', Math.floor($(target).val() / 10) * 10 + 1);
             cleanInputs();
         }, 1000);
+        //socket.emit('scan', $("#map td:nth-child(1)").html());
         socket.emit('myRows'); // Refresh "my rows"
     });
 }());
@@ -169,9 +191,6 @@ var source = $('#transport-form .buttonField div:nth-child(1) input'),
     attackers = $('#transport-form .buttonField div:nth-child(5) input'),
     button = $('#transport-form button');
 var arr = [source, target, money, fuel, attackers];
-/*$(arr).each(function(index, value){
-        $(value).val('');
-});*/
 
 $(button).click(function(event){ 
     event.preventDefault();
@@ -190,9 +209,6 @@ $(button).click(function(event){
         }, 1000);
         socket.emit('myRows'); // Refresh "my rows"
     }
-/*$(arr).each(function(index, value){
-        $(value).val('');
-});*/
 });
 }());
 /*
