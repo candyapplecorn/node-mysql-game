@@ -1,12 +1,11 @@
 # node-mysql-game
-Copyright 2015 Joseph Burger, Alexander McNulty and Nicholas Tarn, all rights reserved.
+*Copyright 2015 Joseph Burger, Alexander McNulty and Nicholas Tarn, all rights reserved.
 To use under MIT license, all copyrights must be perserved.
-Contact at 'candyapplecorn@gmail.com' if you would like to use this.
+Contact at 'candyapplecorn@gmail.com' if you would like to use this.*
 
-node-mysql-game is a basic CRUD application utilizing an HTML front end, Javascript back end and SQL database, intended to be deployed on a linux server. 
+__node-mysql-game is a basic CRUD application utilizing an HTML front end, Javascript back end and SQL database, intended to be deployed on a linux server.__
 
-Demo Video: https://youtu.be/WfJ6ikPaAZs
-Demo Video: https://youtu.be/LbzsqNxETEs
+Demo Video: https://youtu.be/WfJ6ikPaAZs  
 
 Users will be able to register, log in and out, and perform operations to play the game. 
 
