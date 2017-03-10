@@ -1,5 +1,5 @@
 # node-mysql-game
-*Copyright 2015 Joseph Burger, Alexander McNulty and Nicholas Tarn, all rights reserved.
+*Copyright 2015 Joseph Burger all rights reserved.
 To use under MIT license, all copyrights must be perserved.
 Contact at 'candyapplecorn@gmail.com' if you would like to use this.*
 
