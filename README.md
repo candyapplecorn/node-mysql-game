@@ -19,4 +19,30 @@ b.) The database - MySQL. More than just tables, there are over 400 lines of sto
 
 c.) The hardware - The app is planned to be deployed on a linux cloud server. The shell scripts (files ending in .sh) are run on the server's command line.
 
+## Stored Procedures
+
+Much of the logic programming for this game is written in pure SQL. Here's a snippet from [the schema](MySQL/commands.sql) which takes care of registering a new user:
+
+```sql
+CREATE PROCEDURE add_user(usern VARCHAR(255), passw VARCHAR(255), em VARCHAR(255))
+BEGIN
+    DECLARE newuserid, newuserfirstrow INT DEFAULT 0;
+    DECLARE EXIT HANDLER FOR 1062 SELECT "username taken!";
+INSERT INTO players (username, password, email)
+VALUES (usern, (select md5(passw)), em);
+
+WHILE newuserfirstrow = 0 OR newuserfirstrow > (SELECT COUNT(id) FROM gamerows) DO
+    SELECT find_new_user_first_row() INTO newuserfirstrow;
+    IF newuserfirstrow = 0 OR newuserfirstrow > (SELECT COUNT(id) FROM gamerows) THEN
+        SELECT "Calling fillgamerows";
+        CALL fillgamerows(10);
+    END IF;
+END WHILE;
+SELECT id FROM players WHERE username = usern INTO newuserid;
+
+CALL grantrow(newuserfirstrow, newuserid);
+END
+//
+```
+
 Please contact if you find any bugs, security issues or have a suggestion!
