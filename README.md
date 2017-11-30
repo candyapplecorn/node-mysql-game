@@ -13,11 +13,11 @@ The front end, or user interface, is an html page that sends and recieves data u
 
 The back-end consists of several parts:
 
-a.) The server-side code - originally written as PHP (see php-ver/), rewritten as Javascript. It consists of a single file (although any professional operation would break that file into many files), called "Server.js", which listens on a specified socket for connections.
+__a.)__ The server-side code - originally written as PHP (see php-ver/), rewritten as Javascript. It consists of a single file (although any professional operation would break that file into many files), called "Server.js", which listens on a specified socket for connections.
 
-b.) The database - MySQL. More than just tables, there are over 400 lines of stored procedures. This made changing from PHP to Javascript substantially easier, as rather than putting logic for the game into PHP, it was written in MySQL procedural query language.
+__b.)__ The database - MySQL. More than just tables, there are over 400 lines of stored procedures. This made changing from PHP to Javascript substantially easier, as rather than putting logic for the game into PHP, it was written in MySQL procedural query language.
 
-c.) The hardware - The app is planned to be deployed on a linux cloud server. The shell scripts (files ending in .sh) are run on the server's command line.
+__c.)__ The hardware - The app is planned to be deployed on a linux cloud server. The shell scripts (files ending in .sh) are run on the server's command line.
 
 ## Stored Procedures
 
